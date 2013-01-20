@@ -1,0 +1,45 @@
+html {
+  background-color: #FFF8F5;
+}
+
+body {
+  font-family: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
+  font-size: 16px;
+  color: #000;
+}
+
+header, article, section, footer {
+  padding: 0 30px;
+}
+
+header, article, section {
+  margin-bottom: 30px;
+}
+
+header {
+  background-color: #240C00;
+  padding: 30px;
+}
+
+header h1 {
+  font-size: 200%;
+  color: #CDA28F;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, .15), 0 0 1px black;
+}
+
+article h1 {
+  font-size: 130%;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+footer {
+  padding: 7px 30px;
+  width: 100%;
+  font-size: 70%;
+  color: #444;
+  position: fixed;
+  bottom: 0;
+  background-color: #BFB8B5;
+}
