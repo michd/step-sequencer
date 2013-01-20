@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Step sequencer</title>
+  <link rel="stylesheet" href="/assets/css/reset.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+  <header>
+    <h1>Step sequencer</h1>
+  </header>
+
+  <article>
+    <h1>Step sequencer</h1>
+    <p>This is a JavaScript/&lt;audio&gt; experiment to see if I can make a neat drum sequencer that is actually fun to use. Here goes.</p>
+  </article>
+
+  <section id="sequencer">
+    <noscript>This step sequencer toy runs on JavaScript, so please turn it on if you wish to play with it.</noscript>
+    <div id="transport">
+      <button id="play">Play</button><button id="stop">Stop</button>
+      Tempo: <input type="number" id="tempo" value="140">
+    </div>
+    <table>
+      <tr data-track="0">
+        <th>Kick</th>
+        <td>
+          <div class="step" data-step="0"></div>
+          <div class="step" data-step="1"></div>
+          <div class="step" data-step="2"></div>
+          <div class="step" data-step="3"></div>
+        </td>
+        <td>
+          <div class="step" data-step="4"></div>
+          <div class="step" data-step="5"></div>
+          <div class="step" data-step="6"></div>
+          <div class="step" data-step="7"></div>
+        </td>
+        <td>
+          <div class="step" data-step="8"></div>
+          <div class="step" data-step="9"></div>
+          <div class="step" data-step="10"></div>
+          <div class="step" data-step="11"></div>
+        </td>
+        <td>
+          <div class="step" data-step="12"></div>
+          <div class="step" data-step="13"></div>
+          <div class="step" data-step="14"></div>
+          <div class="step" data-step="15"></div>
+        </td>
+      </tr>
+
+      <tr data-track="1">
+        <th>Clap</th>
+        <td>
+          <div class="step" data-step="0"></div>
+          <div class="step" data-step="1"></div>
+          <div class="step" data-step="2"></div>
+          <div class="step" data-step="3"></div>
+        </td>
+        <td>
+          <div class="step" data-step="4"></div>
+          <div class="step" data-step="5"></div>
+          <div class="step" data-step="6"></div>
+          <div class="step" data-step="7"></div>
+        </td>
+        <td>
+          <div class="step" data-step="8"></div>
+          <div class="step" data-step="9"></div>
+          <div class="step" data-step="10"></div>
+          <div class="step" data-step="11"></div>
+        </td>
+        <td>
+          <div class="step" data-step="12"></div>
+          <div class="step" data-step="13"></div>
+          <div class="step" data-step="14"></div>
+          <div class="step" data-step="15"></div>
+        </td>
+      </tr>
+
+      <tr data-track="2">
+        <th>Hihat</th>
+        <td>
+          <div class="step" data-step="0"></div>
+          <div class="step" data-step="1"></div>
+          <div class="step" data-step="2"></div>
+          <div class="step" data-step="3"></div>
+        </td>
+        <td>
+          <div class="step" data-step="4"></div>
+          <div class="step" data-step="5"></div>
+          <div class="step" data-step="6"></div>
+          <div class="step" data-step="7"></div>
+        </td>
+        <td>
+          <div class="step" data-step="8"></div>
+          <div class="step" data-step="9"></div>
+          <div class="step" data-step="10"></div>
+          <div class="step" data-step="11"></div>
+        </td>
+        <td>
+          <div class="step" data-step="12"></div>
+          <div class="step" data-step="13"></div>
+          <div class="step" data-step="14"></div>
+          <div class="step" data-step="15"></div>
+        </td>
+      </tr>
+
+      <tr data-track="3">
+        <th>Snare</th>
+        <td>
+          <div class="step" data-step="0"></div>
+          <div class="step" data-step="1"></div>
+          <div class="step" data-step="2"></div>
+          <div class="step" data-step="3"></div>
+        </td>
+        <td>
+          <div class="step" data-step="4"></div>
+          <div class="step" data-step="5"></div>
+          <div class="step" data-step="6"></div>
+          <div class="step" data-step="7"></div>
+        </td>
+        <td>
+          <div class="step" data-step="8"></div>
+          <div class="step" data-step="9"></div>
+          <div class="step" data-step="10"></div>
+          <div class="step" data-step="11"></div>
+        </td>
+        <td>
+          <div class="step" data-step="12"></div>
+          <div class="step" data-step="13"></div>
+          <div class="step" data-step="14"></div>
+          <div class="step" data-step="15"></div>
+        </td>
+      </tr>
+    </table>
+  </section>
+
+  <footer>
+    By <a href="http://michd.me">Micha&euml;l Duerinckx</a>, January 2013. - <a href="https://github.com/michd/step-sequencer">Fork on Github</a>
+  </footer>
+
+  <!--scripts-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/assets/js/vendor/jquery-1.9.0.min.js"><\/script>')</script>
+  <script src="/assets/js/vendor/underscore-min.js"></script>
+  <script src="/assets/js/sequencer.js"></script>
+</body>
+</html>
