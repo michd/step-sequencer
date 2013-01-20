@@ -51,7 +51,7 @@
     function setTempo(newTempo) {
       var tempo = parseInt(newTempo, 10);
       tempo = Math.round(
-        Math.max(40, Math.min(newTempo, 300))
+        Math.max(40, Math.min(newTempo, 999))
       );
       timing.bpm = tempo;
       return tempo;
