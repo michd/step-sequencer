@@ -43,3 +43,38 @@ footer {
   bottom: 0;
   background-color: #BFB8B5;
 }
+
+
+/* Sequencer styles */
+#transport {
+  margin-bottom: 30px;
+}
+
+th { padding: 0 5px; }
+th, td {
+  border-right: solid 1px #000;
+}
+
+td {
+  padding: 0 10px;
+}
+
+td:nth-child(even) {
+  background-color: #E5E5E5;
+}
+
+div.step {
+  width: 20px;
+  height: 20px;
+  margin: 0 1px;
+  float: left;
+  border: solid 1px black;
+  text-align: center;
+  line-height: 20px;
+}
+
+div.step.on {
+  background-color: #000;
+  color: #FFF;
+}
+
