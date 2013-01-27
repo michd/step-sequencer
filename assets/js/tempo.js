@@ -185,17 +185,28 @@
      */
     function updateStepInterval() {
       stepInterval = ((60 * 1000) / bpm) / (STEPS_PER_WHOLE_NOTE / beatLength);
+      timeFix.ratio = 1;
     }
 
     /**
      * Triggered every (STEPS_PER_WHOLE_NOTE)th note.
      * Runs the callback function if provided
      * and retriggers timeout if isPlaying is still true
+     *
+     * This also measures if the timing is accurate, adjusts otherwise
      */
     function step() {
+
+      var timeDiff;
+
       if (isPlaying) {
         stepTimeout = setTimeout(step, stepInterval * timeFix.ratio);
       }
+
+      // Update ratio to make up for env inaccuracies
+      timeDiff = Date.now() - timeFix.lastTime
+      timeFix.ratio = stepInterval / timeDiff;
+      timeFix.lastTime = Date.now();
 
       callback.call();
     }
@@ -206,6 +217,7 @@
      */
     function start() {
       isPlaying = true;
+      timeFix.lastTime = Date.now() - stepInterval;
       step();
     }
 
