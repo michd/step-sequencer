@@ -4,15 +4,17 @@
 
   $(document).ready(function () {
     var
-      steps = [[], [], [], []],
+      steps = [[], [], [], [], [], [], []],
       channels = [],
       currentStep = 0,
       i;
 
     channels[0] = new App.Channel(al + 'KIK_1.wav').setLabel('Kick');
     channels[1] = new App.Channel(al + 'CLAP.wav').setLabel('Clap');
-    channels[2] = new App.Channel(al + 'HAT_1.wav').setLabel('Hihat');
-    channels[3] = new App.Channel(al + 'SN4.wav').setLabel('Snare');
+    channels[2] = new App.Channel(al + 'HAT_7.wav').setLabel('Closed hihat');
+    channels[3] = new App.Channel(al + 'OP_HAT.wav').setLabel('Open hihat');
+    channels[4] = new App.Channel(al + 'RIDE_CYM.wav').setLabel('Ride').setVolume(0.4);
+    channels[5] = new App.Channel(al + 'SN_2.wav').setLabel('Snare');
 
 
     function playStep() {
@@ -54,6 +56,15 @@
 
     $('#tempo').change(function() {
       $(this).val(App.tempo.setBpm(parseInt($(this).val(), 10)).getBpm());
+    });
+
+    $('tr th input[type=checkbox]').change(function() {
+      var
+        on = $(this).is(':checked'),
+        $tr = $(this).closest('tr');
+
+      channels[$tr.data('track')].toggle(on);
+      $tr.toggleClass('disabled', !on);
     });
 
   });

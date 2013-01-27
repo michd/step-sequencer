@@ -50,9 +50,21 @@ footer {
   margin-bottom: 30px;
 }
 
-th { padding: 0 5px; }
+th {
+  padding: 0 5px;
+  text-align: left;
+  border-bottom: solid 1px black;
+}
+
 th, td {
   border-right: solid 1px #000;
+  border-bottom: dotted 1px #AAA;
+  vertical-align: middle;
+  height: 30px;
+}
+
+th input[type=checkbox] {
+  margin-right: 7px;
 }
 
 td {
@@ -64,17 +76,29 @@ td:nth-child(even) {
 }
 
 div.step {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   margin: 0 1px;
   float: left;
   border: solid 1px black;
   text-align: center;
-  line-height: 20px;
+  line-height: 25px;
+  border-radius: 7px;
 }
 
 div.step.on {
   background-color: #000;
-  color: #FFF;
+}
+
+tr.disabled th {
+  color: #AAA;
+}
+
+tr.disabled div.step {
+  border-color: #AAA;
+}
+
+tr.disabled div.step.on {
+  background-color: #AAA;
 }
 
