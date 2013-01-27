@@ -124,27 +124,6 @@
       stepInterval,
 
       /**
-       * Used to keep track of browser inaccuracies in timeout timing
-       * @type {Object}
-       */
-      timeFix = {
-
-        /**
-         * Last check timestamp in miliseconds, for comparison between desired
-         * interval and actual interval
-         * @type {[type]}
-         */
-        lastTime: Date.now(),
-
-        /**
-         * Ratio by which the desired interval should be adjusted to make up
-         * for browser inaccuracy
-         * @type {Number}
-         */
-        ratio: 1
-      },
-
-      /**
        * Whether or not the sequencer is currently playing, to know whether to
        * set new timeouts and trigger the callback function.
        * @type {Boolean}
@@ -185,28 +164,18 @@
      */
     function updateStepInterval() {
       stepInterval = ((60 * 1000) / bpm) / (STEPS_PER_WHOLE_NOTE / beatLength);
-      timeFix.ratio = 1;
     }
 
     /**
      * Triggered every (STEPS_PER_WHOLE_NOTE)th note.
      * Runs the callback function if provided
      * and retriggers timeout if isPlaying is still true
-     *
-     * This also measures if the timing is accurate, adjusts otherwise
      */
     function step() {
 
-      var timeDiff;
-
       if (isPlaying) {
-        stepTimeout = setTimeout(step, stepInterval * timeFix.ratio);
+        stepTimeout = setTimeout(step, stepInterval);
       }
-
-      // Update ratio to make up for env inaccuracies
-      timeDiff = Date.now() - timeFix.lastTime
-      timeFix.ratio = stepInterval / timeDiff;
-      timeFix.lastTime = Date.now();
 
       callback.call();
     }
@@ -217,7 +186,6 @@
      */
     function start() {
       isPlaying = true;
-      timeFix.lastTime = Date.now() - stepInterval;
       step();
     }
 
@@ -318,9 +286,10 @@
 
 
     /**
-     * [toggle description]
-     * @param  {[type]} on [description]
-     * @return {[type]}    [description]
+     * Switch the tempo ticker on or off.
+     *
+     * @param  {Boolean} on
+     * @return {App.Tempo} self
      */
     this.toggle = function (on) {
 
@@ -387,6 +356,10 @@
     // Store instance in this file's closure for retrieval in case it gets
     // overridden.
     instance = this;
+    App.tempo = instance;
+
+    // Initialize step interval
+    updateStepInterval();
 
 
     /**
