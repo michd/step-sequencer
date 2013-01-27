@@ -1,4 +1,4 @@
-(function ($, _) {
+(function ($) {
 
   var al = '/content/audio/2002DANC/';
 
@@ -170,4 +170,4 @@
 
 
   });
-}(window.jQuery, window._));
+}(window.jQuery));
