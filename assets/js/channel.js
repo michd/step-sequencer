@@ -341,13 +341,7 @@
      * @return {App.Channel} self
      */
     this.toggle = function (on) {
-
-      if (typeof on !== 'undefined') {
-        enabled = !!on;
-        return self;
-      }
-
-      enabled = !enabled;
+      enabled = (typeof on !== 'undefined') ? !!on : !enabled;
       return self;
     };
 
