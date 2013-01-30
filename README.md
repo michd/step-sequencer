@@ -10,6 +10,10 @@ It's just some experimentation on my end, see what I can achieve with it.
 
 ## Changelog
 
+### v0.2.1:
+
+* Implemented volume control in interface using the awesome [jQuery Kontrol](https://github.com/aterrien/jQuery-Kontrol) plugin. Thanks for reminding me of it, [diggabyte](https://github.com/diggabyte)
+
 ### v0.2:
 
 The previous version was mostly initial inspiration. This weekend I've been focussed on structuring things nicely, and as a result there isn't much new in terms of features.
