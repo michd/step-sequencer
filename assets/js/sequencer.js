@@ -40,8 +40,10 @@
       App.tempo.toggle(true);
     }
 
+    // Link up tempo component with playStep
     App.Tempo(playStep);
 
+    // Toggle steps on or off
     $('tr .step').click(function () {
       stepIndex = $(this).data('step');
       $(this).toggleClass('on');
@@ -58,6 +60,7 @@
       $(this).val(App.tempo.setBpm(parseInt($(this).val(), 10)).getBpm());
     });
 
+    // Toggle channels
     $('tr th input[type=checkbox]').change(function() {
       var
         on = $(this).is(':checked'),
@@ -66,6 +69,28 @@
       channels[$tr.data('track')].toggle(on);
       $tr.toggleClass('disabled', !on);
     });
+
+    //Allow changing volume
+
+    function updateVolume(value) {
+      var
+        $tr = $(this.$).closest('tr'),
+        newVol = value / 100;
+      channels[$tr.data('track')].setVolume(newVol);
+    }
+
+    //Init jQuery Kontrol on volume inputs
+    $('tr .volume').dial({
+      flatMouse: true,
+      width: 45,
+      height: 25,
+      displayInput: true,
+      bgColor: '#CDA28F',
+      fgColor: '#240C00',
+      angleOffset: -90,
+      angleArc: 180,
+      change: updateVolume
+    })
 
   });
 }(window.STEPSEQUENCER, window.jQuery));

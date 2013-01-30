@@ -67,6 +67,18 @@ th input[type=checkbox] {
   margin-right: 7px;
 }
 
+tr th input[type=text] {
+  position: relative;
+  z-index: 1;
+}
+
+tr th canvas {
+  position: relative;
+  cursor: ns-resize;
+  z-index: 2;
+  top: 4px;
+}
+
 td {
   padding: 0 10px;
 }
@@ -92,6 +104,10 @@ div.step.on {
 
 tr.disabled th {
   color: #AAA;
+}
+
+tr.disabled th canvas, tr.disabled th input[type=text] {
+  opacity: 0.3;
 }
 
 tr.disabled div.step {
