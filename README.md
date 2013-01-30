@@ -16,7 +16,7 @@ It's just some experimentation on my end, see what I can achieve with it.
 
 ### v0.2:
 
-The previous version was mostly initial inspiration. This weekend I've been focussed on structuring things nicely, and as a result there isn't much new in terms of features.
+The previous version was mostly initial experimentation. This weekend I've been focussed on structuring things nicely, and as a result there isn't much new in terms of features.
 
 * Wrote channel module, managing audio for a single track in the sequencer. This module supports:
     * Muting (disabling) a channel (currently used)
