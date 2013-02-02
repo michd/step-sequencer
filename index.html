@@ -18,208 +18,20 @@
   </article>
 
   <section id="sequencer">
+
     <noscript>This step sequencer toy runs on JavaScript, so please turn it on if you wish to play with it.</noscript>
+
     <div id="transport">
       <button id="play">Play</button><button id="stop">Stop</button>
       Tempo: <input type="number" id="tempo" value="140">
     </div>
-    <table>
-      <tr data-track="0">
-        <th>
-          <input type="checkbox" checked>
-          <input type="text" class="volume" value="100">
-          Kick
-        </th>
-        <td>
-          <div class="step" data-step="0"></div>
-          <div class="step" data-step="1"></div>
-          <div class="step" data-step="2"></div>
-          <div class="step" data-step="3"></div>
-        </td>
-        <td>
-          <div class="step" data-step="4"></div>
-          <div class="step" data-step="5"></div>
-          <div class="step" data-step="6"></div>
-          <div class="step" data-step="7"></div>
-        </td>
-        <td>
-          <div class="step" data-step="8"></div>
-          <div class="step" data-step="9"></div>
-          <div class="step" data-step="10"></div>
-          <div class="step" data-step="11"></div>
-        </td>
-        <td>
-          <div class="step" data-step="12"></div>
-          <div class="step" data-step="13"></div>
-          <div class="step" data-step="14"></div>
-          <div class="step" data-step="15"></div>
-        </td>
-      </tr>
 
-      <tr data-track="1">
-        <th>
-          <input type="checkbox" checked>
-          <input type="text" class="volume" value="100">
-          Clap
-        </th>
-        <td>
-          <div class="step" data-step="0"></div>
-          <div class="step" data-step="1"></div>
-          <div class="step" data-step="2"></div>
-          <div class="step" data-step="3"></div>
-        </td>
-        <td>
-          <div class="step" data-step="4"></div>
-          <div class="step" data-step="5"></div>
-          <div class="step" data-step="6"></div>
-          <div class="step" data-step="7"></div>
-        </td>
-        <td>
-          <div class="step" data-step="8"></div>
-          <div class="step" data-step="9"></div>
-          <div class="step" data-step="10"></div>
-          <div class="step" data-step="11"></div>
-        </td>
-        <td>
-          <div class="step" data-step="12"></div>
-          <div class="step" data-step="13"></div>
-          <div class="step" data-step="14"></div>
-          <div class="step" data-step="15"></div>
-        </td>
-      </tr>
+    <table id="grid"></table>
 
-      <tr data-track="2">
-        <th>
-          <input type="checkbox" checked>
-          <input type="text" class="volume" value="100">
-          Closed hihat
-        </th>
-        <td>
-          <div class="step" data-step="0"></div>
-          <div class="step" data-step="1"></div>
-          <div class="step" data-step="2"></div>
-          <div class="step" data-step="3"></div>
-        </td>
-        <td>
-          <div class="step" data-step="4"></div>
-          <div class="step" data-step="5"></div>
-          <div class="step" data-step="6"></div>
-          <div class="step" data-step="7"></div>
-        </td>
-        <td>
-          <div class="step" data-step="8"></div>
-          <div class="step" data-step="9"></div>
-          <div class="step" data-step="10"></div>
-          <div class="step" data-step="11"></div>
-        </td>
-        <td>
-          <div class="step" data-step="12"></div>
-          <div class="step" data-step="13"></div>
-          <div class="step" data-step="14"></div>
-          <div class="step" data-step="15"></div>
-        </td>
-      </tr>
-
-      <tr data-track="3">
-        <th>
-          <input type="checkbox" checked>
-          <input type="text" class="volume" value="100">
-          Open hihat
-        </th>
-        <td>
-          <div class="step" data-step="0"></div>
-          <div class="step" data-step="1"></div>
-          <div class="step" data-step="2"></div>
-          <div class="step" data-step="3"></div>
-        </td>
-        <td>
-          <div class="step" data-step="4"></div>
-          <div class="step" data-step="5"></div>
-          <div class="step" data-step="6"></div>
-          <div class="step" data-step="7"></div>
-        </td>
-        <td>
-          <div class="step" data-step="8"></div>
-          <div class="step" data-step="9"></div>
-          <div class="step" data-step="10"></div>
-          <div class="step" data-step="11"></div>
-        </td>
-        <td>
-          <div class="step" data-step="12"></div>
-          <div class="step" data-step="13"></div>
-          <div class="step" data-step="14"></div>
-          <div class="step" data-step="15"></div>
-        </td>
-      </tr>
-
-      <tr data-track="4">
-        <th>
-          <input type="checkbox" checked>
-          <input type="text" class="volume" value="100">
-          Ride
-        </th>
-        <td>
-          <div class="step" data-step="0"></div>
-          <div class="step" data-step="1"></div>
-          <div class="step" data-step="2"></div>
-          <div class="step" data-step="3"></div>
-        </td>
-        <td>
-          <div class="step" data-step="4"></div>
-          <div class="step" data-step="5"></div>
-          <div class="step" data-step="6"></div>
-          <div class="step" data-step="7"></div>
-        </td>
-        <td>
-          <div class="step" data-step="8"></div>
-          <div class="step" data-step="9"></div>
-          <div class="step" data-step="10"></div>
-          <div class="step" data-step="11"></div>
-        </td>
-        <td>
-          <div class="step" data-step="12"></div>
-          <div class="step" data-step="13"></div>
-          <div class="step" data-step="14"></div>
-          <div class="step" data-step="15"></div>
-        </td>
-      </tr>
-
-      <tr data-track="5">
-        <th>
-          <input type="checkbox" checked>
-          <input type="text" class="volume" value="100">
-          Snare
-        </th>
-        <td>
-          <div class="step" data-step="0"></div>
-          <div class="step" data-step="1"></div>
-          <div class="step" data-step="2"></div>
-          <div class="step" data-step="3"></div>
-        </td>
-        <td>
-          <div class="step" data-step="4"></div>
-          <div class="step" data-step="5"></div>
-          <div class="step" data-step="6"></div>
-          <div class="step" data-step="7"></div>
-        </td>
-        <td>
-          <div class="step" data-step="8"></div>
-          <div class="step" data-step="9"></div>
-          <div class="step" data-step="10"></div>
-          <div class="step" data-step="11"></div>
-        </td>
-        <td>
-          <div class="step" data-step="12"></div>
-          <div class="step" data-step="13"></div>
-          <div class="step" data-step="14"></div>
-          <div class="step" data-step="15"></div>
-        </td>
-      </tr>
-    </table>
   </section>
 
   <footer>
-    By <a href="http://michd.me">Micha&euml;l Duerinckx</a>, January 2013. - <a href="https://github.com/michd/step-sequencer">Fork on Github</a>
+    By <a href="http://michd.me">Micha&euml;l Duerinckx</a>, January-February 2013. - <a href="https://github.com/michd/step-sequencer">Fork on Github</a>
   </footer>
 
   <!--scripts-->
@@ -230,6 +42,7 @@
   <script src="/assets/js/eventdispatcher.js"></script>
   <script src="/assets/js/channel.js"></script>
   <script src="/assets/js/tempo.js"></script>
+  <script src="/assets/js/ui/track.js"></script>
   <script src="/assets/js/sequencer.js"></script>
 
   <script>

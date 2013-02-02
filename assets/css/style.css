@@ -64,13 +64,18 @@ th, td {
 }
 
 th input[type=checkbox] {
-  margin-right: 7px;
+  margin-right: 10px;
 }
 
 tr th input[type=text] {
   position: relative;
   z-index: 1;
 }
+
+tr th label, tr th input[type=text] {
+  margin-left: 10px;
+}
+
 
 tr th canvas {
   position: relative;
