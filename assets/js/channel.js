@@ -2,6 +2,12 @@
 (function (App, document) {
   "use strict";
 
+  function getFilename(path) {
+    var pathSplit = path.split('/');
+    pathSplit = pathSplit.pop().split('.');
+    return pathSplit[Math.max(0, pathSplit.length - 2)];
+  }
+
   /**
    * Defines a single channel in the sequencer, comprising of one audio sample.
    *
@@ -25,7 +31,7 @@
        * Label for display in the UI
        * @type {String}
        */
-      label = '',
+      label = getFilename(sampleUrl),
 
       /**
        * Maximum number of audio instances playing simultaneously
