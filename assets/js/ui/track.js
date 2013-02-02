@@ -381,15 +381,11 @@
           $tr.find('.step').not($step).removeClass('triggered');
           $step.addClass('triggered');
 
-          setTimeout(function () {
-
-            //$step.addClass('flash').removeClass('triggered');
-
-            if (on && trackEnabled) {
+          if (on && trackEnabled) {
+            setTimeout(function () {
               $tr.addClass('flash').removeClass('triggered');
-            }
-
-          }, 0);
+            }, 0);
+          }
         },
 
 

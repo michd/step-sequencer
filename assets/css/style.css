@@ -120,7 +120,6 @@ td:nth-child(even) {
 
 .step.triggered {
   background-color: #FFC;
-  /*border-width: 2px;*/
 }
 
 .step.triggered.on {
