@@ -1,24 +1,33 @@
 // event dispatcher component so we don't need jQuery for that
 /*global window: true */
-(function (App, Array) {
+(function (App, Array, console) {
 	"use strict";
 
 
 	// ## Private variables
 
-	/**
-	 * Hash of event names and arrays of handler functions. Each function
-	 * associated with an event name is called whenever that event is triggered
-	 *
-	 * Example:
-	 * 'ui.channel.toggle': [
-	 *   function,
-	 *   function
-	 * ]
-	 *
-	 * @type {Object}
-	 */
-	var eventSubscribers = {};
+	var
+		/**
+		 * Hash of event names and arrays of handler functions. Each function
+		 * associated with an event name is called whenever that event is triggered
+		 *
+		 * Example:
+		 * 'ui.channel.toggle': [
+		 *   function,
+		 *   function
+		 * ]
+		 *
+		 * @type {Object}
+		 */
+		eventSubscribers = {},
+
+		/**
+		 * Whether or not to console.log events as they are triggered
+		 * @type {Boolean}
+		 */
+		logEvents = false,
+
+		logIgnoredEvents = [];
 
 
 	// ## Private methods - however exposed through the public interface
@@ -34,7 +43,8 @@
 	function trigger(eventName, data, context) {
 		var
 			subscribers = eventSubscribers[eventName],
-			i, iMax;
+			i, iMax,
+			logThis = (logEvents && logIgnoredEvents.indexOf(eventName) === -1);
 
 		// Arrayify data
 		data = (data instanceof Array) ? data : [data];
@@ -43,11 +53,26 @@
 		context = context || App;
 
 		// No subscribers found for this event, don't bother.
-		if (typeof subscribers === 'undefined') { return; }
+		if (typeof subscribers === 'undefined') {
+
+			if (logThis) {
+				console.log('[EventDispatcher] No current subscribers for {' + eventName + '}');
+			}
+
+			return;
+		}
 
 		for (i = 0, iMax = subscribers.length; i < iMax; i += 1) {
 			subscribers[i].apply(context, data);
 		}
+
+		// Do some logging
+		if (logThis) {
+			console.log(
+				'[EventDispatcher] {' +  eventName + '} triggered with data: ', data
+			);
+		}
+
 	}
 
 
@@ -104,13 +129,25 @@
 	}
 
 
+	function toggleLogging (on) {
+		logEvents = (typeof on === 'undefined') ? !logEvents : !!on;
+	}
+
+
 	// ## Public interface
 
 	App.eventDispatcher = {
 		trigger:        trigger,
 		subscribe:      subscribe,
 		unsubscribe:    unsubscribe,
-		unsubscribeAll: unsubscribeAll
+		unsubscribeAll: unsubscribeAll,
+		enableLogging:  function () { toggleLogging(true); },
+		disableLogging: function () { toggleLogging(false); },
+		dontLog:        function (eventName) {
+			if (logIgnoredEvents.indexOf(eventName) === -1) {
+				logIgnoredEvents.push(eventName);
+			}
+		}
 	};
 
-}(window.STEPSEQUENCER, window.Array));
+}(window.STEPSEQUENCER, window.Array, (window.console && window.console ? window.console : { log: function() {}})));
