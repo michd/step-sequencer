@@ -50,17 +50,19 @@ footer {
   margin-bottom: 30px;
 }
 
-th {
-  padding: 0 5px;
-  text-align: left;
-  border-bottom: solid 1px black;
-}
 
 th, td {
   border-right: solid 1px #000;
   border-bottom: dotted 1px #AAA;
   vertical-align: middle;
   height: 30px;
+}
+
+th {
+  padding: 0 5px;
+  text-align: left;
+  border-bottom: solid 1px black;
+  border-right-width: 2px;
 }
 
 th input[type=checkbox] {
@@ -76,6 +78,15 @@ tr th label, tr th input[type=text] {
   margin-left: 10px;
 }
 
+tr.triggered th {
+  border-right-color: red;
+  background-color: #FDD;
+}
+
+tr.flash th {
+  -webkit-transition:  100ms linear;
+  transition: 100ms linear;
+}
 
 tr th canvas {
   position: relative;
@@ -92,7 +103,7 @@ td:nth-child(even) {
   background-color: #E5E5E5;
 }
 
-div.step {
+.step {
   width: 25px;
   height: 25px;
   margin: 0 1px;
@@ -103,9 +114,25 @@ div.step {
   border-radius: 7px;
 }
 
-div.step.on {
+.step.on {
   background-color: #000;
 }
+
+.step.triggered {
+  background-color: #FFC;
+  /*border-width: 2px;*/
+}
+
+.step.triggered.on {
+  border-color: red;
+  background-color: red;
+}
+
+.step.flash {
+  -webkit-transition: 100ms linear;
+  transition: 100ms linear;
+}
+
 
 tr.disabled th {
   color: #AAA;
@@ -115,11 +142,12 @@ tr.disabled th canvas, tr.disabled th input[type=text] {
   opacity: 0.3;
 }
 
-tr.disabled div.step {
+tr.disabled .step, tr.disabled .step.triggered {
   border-color: #AAA;
+  background-color: transparent;
 }
 
-tr.disabled div.step.on {
+tr.disabled .step.on, tr.disabled .step.on.triggered {
   background-color: #AAA;
 }
 

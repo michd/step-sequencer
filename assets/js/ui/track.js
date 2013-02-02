@@ -371,21 +371,25 @@
 
           var
             $step = $(stepsCollection[stepIndex]),
-            on = $step.hasClass('on');
+            on = $step.hasClass('on'),
+            trackEnabled  = ! $tr.hasClass('disabled');
 
-          $tr.toggleClass('current', on);
+          if (trackEnabled) {
+            $tr.removeClass('flash').toggleClass('triggered', on);
+          }
 
+          $tr.find('.step').not($step).removeClass('triggered');
           $step.addClass('triggered');
 
           setTimeout(function () {
 
-            $step.addClass('flash').removeClass('triggered');
+            //$step.addClass('flash').removeClass('triggered');
 
-            if (on) {
+            if (on && trackEnabled) {
               $tr.addClass('flash').removeClass('triggered');
             }
 
-          });
+          }, 0);
         },
 
 
