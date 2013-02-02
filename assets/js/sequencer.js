@@ -72,12 +72,12 @@
 
 
     // Set up initial audio channels
-    channels[0] = new App.Channel(al + 'KIK_1.wav');//.setLabel('Kick');
-    channels[1] = new App.Channel(al + 'CLAP.wav');//.setLabel('Clap');
-    channels[2] = new App.Channel(al + 'HAT_7.wav');//.setLabel('Closed hihat');
-    channels[3] = new App.Channel(al + 'OP_HAT.wav');//.setLabel('Open hihat');
-    channels[4] = new App.Channel(al + 'RIDE_CYM.wav');//.setLabel('Ride').setVolume(0.4);
-    channels[5] = new App.Channel(al + 'SN_2.wav');//.setLabel('Snare');
+    channels[0] = new App.Channel(al + 'KIK_1.wav');
+    channels[1] = new App.Channel(al + 'CLAP.wav');
+    channels[2] = new App.Channel(al + 'HAT_7.wav');
+    channels[3] = new App.Channel(al + 'OP_HAT.wav');
+    channels[4] = new App.Channel(al + 'RIDE_CYM.wav');
+    channels[5] = new App.Channel(al + 'SN_2.wav');
 
     // Set up some mothereffing UI tracks
     for (i = 0; i < channels.length; i += 1) {
