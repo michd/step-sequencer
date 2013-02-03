@@ -55,7 +55,7 @@ th, td {
   border-right: solid 1px #000;
   border-bottom: dotted 1px #AAA;
   vertical-align: middle;
-  height: 30px;
+  height: 35px;
 }
 
 th {
@@ -63,6 +63,12 @@ th {
   text-align: left;
   border-bottom: solid 1px black;
   border-right-width: 2px;
+  vertical-align: middle;
+}
+
+th button.replace {
+  float: right;
+  margin: 0 0 0 5px
 }
 
 th input[type=checkbox] {
