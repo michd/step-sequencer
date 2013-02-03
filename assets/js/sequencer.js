@@ -57,40 +57,27 @@
 
   $(document).ready(function () {
     var
-      steps = [[], [], [], [], [], [], []],
+      //Todo: ChannelManager, ui.TrackManager
       channels = [],
       uiTracks = [],
-      currentStep = 0,
       $grid = $('#grid'),
+
       i;
 
-    function playStep() {
-
-      var i;
-
-      for (i = 0; i < steps.length; i += 1) {
-        if (steps[i][currentStep]) {
-          channels[i].trigger();
-        }
-      }
-      events.trigger('step.tick', currentStep, App);
-
-      currentStep += 1;
-      //TODO needs to be more dynamic.
-      if (currentStep > 15) { currentStep = 0; }
-    }
-
     function reset() {
-      currentStep = 0;
+      //currentStep = 0;
+      events.trigger('ui.transport.reset');
+
     }
 
     function play() {
       reset();
+      //todo: use event
       App.tempo.toggle(true);
     }
 
     // Link up tempo component with playStep
-    App.Tempo(playStep);
+    App.Tempo();
 
 
     $('#play').click(play);
@@ -99,26 +86,11 @@
       App.tempo.toggle(false);
     });
 
+    //todo: trigger proper event
     $('#tempo').change(function () {
       $(this).val(App.tempo.setBpm(parseInt($(this).val(), 10)).getBpm());
     });
 
-
-    // Listen to UI for step toggles
-    events.subscribe('ui.step.toggled', function (channelId, stepIndex, on) {
-      steps[channelId][stepIndex] = on;
-    });
-
-
-    // Listen to UI for channel toggles
-    events.subscribe('ui.track.toggled', function (channelId, on) {
-      channels[channelId].toggle(on);
-    });
-
-    // Listen to UI for volume changes
-    events.subscribe('ui.volume.changed', function (channelId, newVolume) {
-      channels[channelId].setVolume(newVolume);
-    });
 
     // Listen to UI for sample replace requests
     events.subscribe('ui.sample.replace.requested', function (channelId, trackLabel) {
@@ -152,8 +124,11 @@
       }).spawn();
     });
 
+    // Init pattern singleton
+    App.Pattern();
 
     // Set up initial audio channels
+    // TODO: ChannelManager
     channels[0] = new App.Channel(al + 'KIK_1.wav');
     channels[1] = new App.Channel(al + 'CLAP.wav');
     channels[2] = new App.Channel(al + 'HAT_7.wav');
@@ -162,6 +137,7 @@
     channels[5] = new App.Channel(al + 'SN_2.wav');
 
     // Set up some mothereffing UI tracks
+    // TODO: TrackManager
     for (i = 0; i < channels.length; i += 1) {
       uiTracks[i] = new App.ui.Track(i);
       uiTracks[i].setLabel(channels[i].getLabel());

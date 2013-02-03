@@ -2,11 +2,14 @@
 (function (App, Date, setTimeout, clearTimeout) {
   "use strict";
 
-  /**
-   * Storage for the single App.Tempo instance once it's initialized
-   * @type {App.Tempo}
-   */
-  var instance;
+  var
+    /**
+     * Storage for the single App.Tempo instance once it's initialized
+     * @type {App.Tempo}
+     */
+    instance,
+
+    events = App.eventDispatcher;
 
 
   /**
@@ -54,6 +57,11 @@
    * this constructor.
    *
    * @param {Function} stepCallback callback function run every step to init with
+   * @todo Refactor so this module just triggers a tempo.tick event instead of
+   * taking a callback
+   * @todo Make this listen for ui play/pause/stop events to replace
+   * public interface
+   * @todo Make this listen for ui bpm change events to replace public interface
    */
   App.Tempo = function (stepCallback) {
 
@@ -176,6 +184,8 @@
       if (isPlaying) {
         stepTimeout = setTimeout(step, stepInterval);
       }
+
+      events.trigger('tempo.step');
 
       callback.call();
     }

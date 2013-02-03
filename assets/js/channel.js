@@ -2,10 +2,24 @@
 (function (App, document) {
   "use strict";
 
+  var
+    channelCount = 0,
+    events = App.eventDispatcher;
+
+
   function getFilename(path) {
     var pathSplit = path.split('/');
     pathSplit = pathSplit.pop().split('.');
     return pathSplit[Math.max(0, pathSplit.length - 2)];
+  }
+
+
+  function getNewChannelId() {
+
+    var thisChannelId = channelCount;
+
+    channelCount += 1;
+    return thisChannelId;
   }
 
   /**
@@ -21,6 +35,13 @@
     // ## Private properties
 
     var
+
+      /**
+       * Unique ID for this channel
+       * @type {Number}
+       */
+      channelId = getNewChannelId(),
+
       /**
        * URL to sample loaded into this channel's audio instances
        * @type {String}
@@ -247,6 +268,15 @@
     }
 
 
+    /**
+     * Clean up any lingering data and trigger channel.removed event
+     */
+    function remove() {
+      //todo: check for cleanup
+      events.trigger('channel.removed', channelId);
+    }
+
+
 
     // ## Public interface methods
 
@@ -354,6 +384,14 @@
 
 
     /**
+     * Get the unique identifier
+     */
+    this.getId = function () { return channelId; };
+
+    this.getChannelId = this.getId;
+
+
+    /**
      * Get the currently used sample url of this channel
      *
      * @return {String}
@@ -423,6 +461,13 @@
 
     // ## Initialization
     refreshPlayers();
+
+    // Yay!
+    events.trigger('channel.added', channelId);
+
+    events.subscribe('channel.triggered.channel-' + channelId, this.trigger);
+    events.subscribe('ui.track.toggled.channel-' + channelId, this.toggle);
+    events.subscribe('ui.volume.changed.channel-' + channelId, this.setVolume);
 
   };
 

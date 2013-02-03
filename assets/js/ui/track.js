@@ -175,10 +175,11 @@
      * @param {Number} value
      */
     function updateVolume(value) {
+
       events.trigger(
-        'ui.volume.changed', // Event name
-        [trackId, value / 100], // Data
-        $tr.find('th .volume')[0] //Contect
+        'ui.volume.changed.channel-' + trackId,
+        value / 100,
+        $tr.find('th .volume')[0]
       );
     }
 
@@ -235,11 +236,7 @@
 
       $tr.toggleClass('disabled', !on);
 
-      events.trigger(
-        'ui.track.toggled', // Event name
-        [trackId, on], // Params
-        this // Context
-      );
+      events.trigger('ui.track.toggled.channel-' + trackId, on, this);
 
     });
 
