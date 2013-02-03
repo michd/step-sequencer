@@ -266,6 +266,7 @@
       }
 
       sampleUrl = newSampleUrl;
+      label = getFilename(sampleUrl);
       refreshPlayers({src: true});
       return self;
 
