@@ -202,7 +202,8 @@
           $('<input>', {type: 'checkbox', checked: 'checked'}),
           $('<input>', {type: 'text', 'class': 'volume', value: 100})
             .dial(dialOptions),
-          $('<label>').html(trackName)
+          $('<label>').html(trackName),
+          $('<button>', {'class': 'replace'}).html('Replace')
         )
       );
 
@@ -243,6 +244,7 @@
     });
 
 
+    // Label clicked (edit)
     $tr.on('click', 'th label', function () {
 
       var oldValue = $(this).html();
@@ -268,6 +270,14 @@
       );
     });
 
+    // Replace button clicked
+    $tr.on('click', 'th .replace', function () {
+      events.trigger(
+        'ui.sample.replace.requested', // Event name
+        [trackId, $tr.find('th label').html()], // Parameters
+        this // Context
+      );
+    });
 
     // ## Public interface methods
 
@@ -440,7 +450,11 @@
 
           $(volumeInput).val(Math.round(value * 100));
 
-        };
+        },
+
+        sampleChanged = function (sampleUrl, label) {
+          $tr.find('th label').html(label);
+        }
 
       initRow();
 
@@ -449,7 +463,8 @@
       events.subscribe('step.tick', stepTick);
       events.subscribe('step.toggled.channel-'    + trackId, stepToggled);
       events.subscribe('channel.toggled.channel-' + trackId, channelToggled);
-      events.subscribe('volume.change.channel-'   + trackId, volumeChanged);
+      events.subscribe('volume.changed.channel-'   + trackId, volumeChanged);
+      events.subscribe('sample.changed.channel-'  + trackId, sampleChanged);
 
     }()); // End intialize
 
