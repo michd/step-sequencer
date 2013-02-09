@@ -69,20 +69,21 @@
 		// Do some logging
 		if (logThis) {
 			console.log(
-				'[EventDispatcher] {' +  eventName + '} triggered with data: ', data
+				'[EventDispatcher] {' +  eventName + '} triggered with data: ',
+				data
 			);
 		}
-
 	}
 
-
 	/**
-	 * Add a callback function to the list of subscribers for this event
+	 * Add a single subscribtion: callback function to list of subscribers
+	 * for eventName
 	 *
-	 * @param  {String} eventName
+	 * @param  {String}   eventName
 	 * @param  {Function} callback
 	 */
-	function subscribe(eventName, callback) {
+	function subscribeSingle(eventName, callback) {
+
 		var subscribers = eventSubscribers[eventName];
 
 		if (typeof subscribers === 'undefined') {
@@ -90,6 +91,40 @@
 		}
 
 		subscribers.push(callback);
+	}
+
+
+	/**
+	 * Subscribe to a set of events with object syntax:
+	 * eventName: callback pairs
+	 *
+	 * @param  {Object} eventHash [description]
+	 */
+	function subscribeHash(eventHash) {
+
+		var eventName;
+
+		for (eventName in eventHash) {
+			if (eventHash.hasOwnProperty(eventName)) {
+				subscribeSingle(eventName, eventHash[eventName]);
+			}
+		}
+	}
+
+
+	/**
+	 * Add a callback function to the list of subscribers for this event
+	 *
+	 * @param  {String|Object} eventNameOrHash
+	 * @param  {Function} callback
+	 */
+	function subscribe(eventNameOrHash, callback) {
+
+		if (typeof eventNameOrHash === 'object') {
+			return subscribeHash(eventNameOrHash);
+		}
+
+		return subscribeSingle(eventNameOrHash, callback);
 	}
 
 
@@ -129,8 +164,20 @@
 	}
 
 
-	function toggleLogging (on) {
+	function toggleLogging(on) {
 		logEvents = (typeof on === 'undefined') ? !logEvents : !!on;
+	}
+
+
+	// ## Intialize
+
+	// Make sure console.log is a thing.
+	if (typeof console === 'undefined') {
+		console = {log: function() {}};
+	}
+
+	if (typeof console.log !== 'function') {
+		console.log = function() {};
 	}
 
 
@@ -150,4 +197,4 @@
 		}
 	};
 
-}(window.STEPSEQUENCER, window.Array, (window.console && window.console ? window.console : { log: function() {}})));
+}(window.STEPSEQUENCER, window.Array, window.console));
