@@ -456,12 +456,13 @@
       initRow();
 
       // External event listeners
-
-      events.subscribe('step.tick', stepTick);
-      events.subscribe('step.toggled.channel-'    + trackId, stepToggled);
-      events.subscribe('channel.toggled.channel-' + trackId, channelToggled);
-      events.subscribe('volume.changed.channel-'   + trackId, volumeChanged);
-      events.subscribe('sample.changed.channel-'  + trackId, sampleChanged);
+      events.subscribe({
+        'step.tick', stepTick,
+        'step.toggled.channel-'    + trackId:  stepToggled,
+        'channel.toggled.channel-' + trackId:  channelToggled,
+        'volume.changed.channel-'   + trackId: volumeChanged,
+        'sample.changed.channel-'  + trackId:, sampleChanged
+      });
 
     }()); // End intialize
 

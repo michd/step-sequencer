@@ -465,9 +465,11 @@
     // Yay!
     events.trigger('channel.added', channelId);
 
-    events.subscribe('channel.triggered.channel-' + channelId, this.trigger);
-    events.subscribe('ui.track.toggled.channel-' + channelId, this.toggle);
-    events.subscribe('ui.volume.changed.channel-' + channelId, this.setVolume);
+    events.subscribe({
+      'channel.triggered.channel-' + channelId: this.trigger,
+      'ui.track.toggled.channel-'  + channelId:  this.toggle,
+      'ui.volume.changed.channel-' + channelId: this.setVolume
+    });
 
   };
 

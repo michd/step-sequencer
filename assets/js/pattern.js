@@ -266,13 +266,15 @@
 
 
 		// Subscribe to some mothereffin events
-		events.subscribe('steps-per-channel.update', correctStepCount);
-		events.subscribe('channel.added',  addChannel);
-		events.subscribe('channel.removed', removeChannel);
-		events.subscribe('ui.step.toggled', stepToggled);
-		events.subscribe('ui.pattern.clear', clearPattern);
-		events.subscribe('ui.transport.reset', resetCurrentStep);
-		events.subscribe('tempo.step', tick);
+		events.subscribe({
+			'steps-per-channel.update': correctStepCount,
+			'channel.added':            addChannel,
+			'channel.removed':          removeChannel,
+			'ui.step.toggled':          stepToggled,
+			'ui.pattern.clear':         clearPattern,
+			'ui.transport.reset':       resetCurrentStep,
+			'tempo.step':               tick
+		});
 
 
 		/**
