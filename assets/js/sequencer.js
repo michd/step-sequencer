@@ -93,36 +93,42 @@
 
 
     // Listen to UI for sample replace requests
-    events.subscribe('ui.sample.replace.requested', function (channelId, trackLabel) {
+    events.subscribe(
+      'ui.sample.replace.requested',
+      function (channelId, trackLabel) {
 
-      var
-        channel = channels[channelId],
-        currentSampleUrl = channel.getSampleUrl();
+        var
+          channel = channels[channelId],
+          currentSampleUrl = channel.getSampleUrl();
 
-      App.ui.dialogs.MultipleChoice({
-        content:     'Replace sample #' + (channelId + 1) + ' for ' + trackLabel,
-        choices:     sampleLibrary,
-        cancellable: true,
+        App.ui.SamplePicker({ // will instantiate automatically
 
-        onChange: function (testSample) {
-          channel.setSample(testSample);
-        },
+          content: 'Replace sample #' + (channelId + 1) + ' for ' + trackLabel,
 
-        onClose: function (result) {
-          if (result === false) {
-            channel.setSample(currentSampleUrl);
-          } else {
-            channel.setSample(result);
-            events.trigger(
-              'sample.changed.channel-' + channelId,
-              [result, channel.getLabel()],
-              App
-           );
+          //TODO: figure out a clean way to get the selected sample in here
+
+          onChange: function (testSample) {
+            channel.setSample(testSample);
+          },
+
+          onClose: function (result) {
+
+            if (result === false) {
+              channel.setSample(currentSampleUrl);
+            } else {
+
+              channel.setSample(result);
+              events.trigger(
+                'sample.changed.channel-' + channelId,
+                [result, channel.getLabel()],
+                App
+              );
+
+            }
           }
-        }
-
-      }).spawn();
-    });
+        }); // Sample picker init
+      }
+    );
 
     // Init pattern singleton
     App.Pattern();
