@@ -276,6 +276,7 @@
       );
     });
 
+
     // ## Public interface methods
 
     /**
@@ -348,6 +349,101 @@
       return self;
     };
 
+
+    /**
+     * Updates the step component in the UI with the new on status
+     *
+     * @param {Number} stepIndex
+     * @param {Boolean} on Whether the step is on in its new state
+     * @return {App.ui.Track} self
+     */
+    this.toggleStep = function (stepIndex, on) {
+      $(stepsCollection[stepIndex]).toggleClass('on', on);
+      return self;
+    };
+
+
+    /**
+     * Briefly highlight current step in the track.
+     * If this step is active (plays its sample), briefly highlight the channel
+     * name
+     *
+     * Triggered by step.tick event
+     *
+     * @param {Number} stepIndex
+     * @return {App.ui.Track} self
+     */
+    this.stepTick = function (stepIndex) {
+      var
+        $step = $(stepsCollection[stepIndex]),
+        on = $step.hasClass('on'),
+        trackEnabled  = ! $tr.hasClass('disabled');
+
+      if (trackEnabled) {
+        $tr.removeClass('flash').toggleClass('triggered', on);
+      }
+
+      $tr.find('.step').not($step).removeClass('triggered');
+      $step.addClass('triggered');
+
+      if (on && trackEnabled) {
+        setTimeout(function () {
+          $tr.addClass('flash').removeClass('triggered');
+        }, 0);
+      }
+
+      return self;
+    };
+
+
+    /**
+     * Update volume input value if external volume change comes through
+     *
+     * @param {Number} value
+     * @return {App.ui.Track} self
+     */
+    this.setVolume = function (value) {
+
+      var volumeInput = $tr.find('th .volume')[0];
+
+      // We triggered this, so ignore
+      if (this === volumeInput) { return self; }
+
+      $(volumeInput).val(Math.round(value * 100));
+
+      return self;
+    };
+
+
+    /**
+     * Updates the disabled/enabled state of the track after making sure the
+     * event did not originate here.
+     *
+     * @param {Boolean} on
+     * @return {App.ui.Track} self
+     */
+    this.toggle = function (on) {
+
+      var trackCheckbox = $tr.find('th input[type=checkbox]')[0];
+
+      // Make sure the event doesn't originate from here
+      if (trackCheckbox === this) { return self; }
+
+      $(trackCheckbox).prop('checked', on); // (Un)check checkbox
+
+      $tr.toggleClass('disabled', !on); // Enable or disable the row
+
+      return self;
+    };
+
+
+    /**
+     * Return the unique track identifier
+     * @return {Number}
+     */
+    this.getTrackId = function () { return trackId; };
+
+
     /**
      * Get the jQuery row object for this track
      *
@@ -358,114 +454,9 @@
     };
 
 
-    //Initialize instance
-    (function () {
+    // ## Initialization
 
-      var
-
-        //Event response methods
-
-        /**
-         * Briefly highlight current step in the track.
-         * If this step is active (plays its sample), briefly highlight the channel
-         * name
-         *
-         * Triggered by step.tick event
-         *
-         * @param {Number} stepIndex
-         */
-        stepTick = function (stepIndex) {
-
-          var
-            $step = $(stepsCollection[stepIndex]),
-            on = $step.hasClass('on'),
-            trackEnabled  = ! $tr.hasClass('disabled');
-
-          if (trackEnabled) {
-            $tr.removeClass('flash').toggleClass('triggered', on);
-          }
-
-          $tr.find('.step').not($step).removeClass('triggered');
-          $step.addClass('triggered');
-
-          if (on && trackEnabled) {
-            setTimeout(function () {
-              $tr.addClass('flash').removeClass('triggered');
-            }, 0);
-          }
-        },
-
-
-        /**
-         * Updates the step component in the UI with the new on status, only if the
-         * context of this event is not the actual step element.
-         *
-         * This allows for dynamically loading patterns
-         *
-         * @param {Number} stepIndex
-         * @param {Boolean} on Whether the step is on in its new state
-         */
-        stepToggled = function (stepIndex, on) {
-
-          // Make sure event does not originate from a step
-          if (getStepIndex(this) === -1) {
-            $(stepsCollection[stepsCollection]).toggleClass('on', on);
-          }
-        },
-
-
-        /**
-         * Updates the disabled/enabled state of the track after making sure the
-         * event did not originate here.
-         *
-         * @param  {Number} channelId To make sure it's relevant to this
-         * @param  {Boolean} on
-         */
-        channelToggled = function (on) {
-
-          var trackCheckbox = $tr.find('th input[type=checkbox]')[0];
-
-          // Make sure the event doesn't originate from here
-          if (trackCheckbox === this) { return; }
-
-          $(trackCheckbox).prop('checked', on); // (Un)check checkbox
-
-          $tr.toggleClass('disabled', !on); // Enable or disable the row
-        },
-
-        /**
-         * Update volume input value if external volume change comes through
-         *
-         * @param  {Number} value [description]
-         */
-        volumeChanged = function (value) {
-
-          var volumeInput = $tr.find('th .volume')[0];
-
-          // We triggered this, so ignore
-          if (this === volumeInput) { return; }
-
-          $(volumeInput).val(Math.round(value * 100));
-
-        },
-
-        sampleChanged = function (sampleUrl, label) {
-          $tr.find('th label').html(label);
-        }
-
-      initRow();
-
-      // External event listeners
-      events.subscribe({
-        'step.tick', stepTick,
-        'step.toggled.channel-'    + trackId:  stepToggled,
-        'channel.toggled.channel-' + trackId:  channelToggled,
-        'volume.changed.channel-'   + trackId: volumeChanged,
-        'sample.changed.channel-'  + trackId:, sampleChanged
-      });
-
-    }()); // End intialize
-
+    initRow();
   };
 
 }(window.STEPSEQUENCER, window.jQuery, window.setTimeout));
