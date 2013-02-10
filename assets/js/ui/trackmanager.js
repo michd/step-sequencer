@@ -7,301 +7,301 @@
 
 /*global window: true*/
 (function (App, $) {
-	"use strict";
+  "use strict";
 
-	var
-		events = App.eventDispatcher,
-		instance;
+  var
+    events = App.eventDispatcher,
+    instance;
 
-	App.namespace('ui');
+  App.namespace('ui');
 
 
-	/**
-	 * Singleton, manages ui.Track entries and directs relevant entries to actions
-	 * for the correct track.
-	 *
-	 * @param {String} gridSelector Selector for the table where tracks get added.
-	 * @param {String} controlsSelector Selector for element to add buttons to
-	 */
-	App.ui.TrackManager = function (gridSelector, controlsSelector) {
+  /**
+   * Singleton, manages ui.Track entries and directs relevant entries to actions
+   * for the correct track.
+   *
+   * @param {String} gridSelector Selector for the table where tracks get added.
+   * @param {String} controlsSelector Selector for element to add buttons to
+   */
+  App.ui.TrackManager = function (gridSelector, controlsSelector) {
 
-		// ## Private properties
+    // ## Private properties
 
-		var
-			/**
-			 * Holds all App.ui.Track objects
-			 * @type {Array}
-			 */
-			tracks = [],
+    var
+      /**
+       * Holds all App.ui.Track objects
+       * @type {Array}
+       */
+      tracks = [],
 
-			/**
-			 * Quick trackId: tracks array index lookup hash
-			 * @type {Object}
-			 */
-			trackIndex = {},
+      /**
+       * Quick trackId: tracks array index lookup hash
+       * @type {Object}
+       */
+      trackIndex = {},
 
-			/**
-			 * Reference to button used for adding a new track
-			 * @type {jQuery}
-			 */
-			$addButton = $(),
+      /**
+       * Reference to button used for adding a new track
+       * @type {jQuery}
+       */
+      $addButton = $(),
 
-			/**
-			 * Container for any track management control buttons (addButton)
-			 * @type {jQuery}
-			 */
-			$controls = $(controlsSelector || '#trackmanager'),
+      /**
+       * Container for any track management control buttons (addButton)
+       * @type {jQuery}
+       */
+      $controls = $(controlsSelector || '#trackmanager'),
 
-			/**
-			 * The table for all these tracks
-			 * @type {jQuery}
-			 */
-			$grid = $(gridSelector || '#grid');
+      /**
+       * The table for all these tracks
+       * @type {jQuery}
+       */
+      $grid = $(gridSelector || '#grid');
 
 
 
 
-		// Force instatiation before continuing
+    // Force instatiation before continuing
 
-		if (this.constructor !== App.ui.TrackManager) {
-			return new App.ui.TrackManager();
-		}
+    if (this.constructor !== App.ui.TrackManager) {
+      return new App.ui.TrackManager();
+    }
 
 
-		// ## Private methods
+    // ## Private methods
 
-		/**
-		 * Ensures the trackIndex lookup dictionary is up to date with
-		 * the tracks array
-		 */
-		function rehashTrackIndex() {
+    /**
+     * Ensures the trackIndex lookup dictionary is up to date with
+     * the tracks array
+     */
+    function rehashTrackIndex() {
 
-			var i;
+      var i;
 
-			// Empty current index
-			trackIndex = {};
+      // Empty current index
+      trackIndex = {};
 
-			// Fill with current data
-			for (i = 0; i < tracks.length; i += 1) {
-				trackIndex[tracks[i].getTrackId()] = i;
-			}
-		}
+      // Fill with current data
+      for (i = 0; i < tracks.length; i += 1) {
+        trackIndex[tracks[i].getTrackId()] = i;
+      }
+    }
 
 
-		/**
-		 * Retrieve a ui track object from the track array by its unique ID
-		 *
-		 * @param {Number} trackId
-		 * @return {App.ui.Track}
-		 */
-		function getTrackById(trackId) {
+    /**
+     * Retrieve a ui track object from the track array by its unique ID
+     *
+     * @param {Number} trackId
+     * @return {App.ui.Track}
+     */
+    function getTrackById(trackId) {
 
-			if (typeof trackIndex[trackId] === 'undefined') { return false; }
+      if (typeof trackIndex[trackId] === 'undefined') { return false; }
 
-			if (typeof tracks[trackIndex[trackId]] === 'undefined') {
-				return false;
-			}
+      if (typeof tracks[trackIndex[trackId]] === 'undefined') {
+        return false;
+      }
 
-			return tracks[trackIndex[trackId]];
-		}
+      return tracks[trackIndex[trackId]];
+    }
 
 
-		/**
-		 * Event listener hook for when a new channel is added.
-		 * Creates a new UI track for said new channel.
-		 *
-		 * @param {Number} trackId Unique identifier for the channel/track
-		 * @param {String} label
-		 * @param {Number} volume (0-1)
-		 * @param {Boolean} on Whether this channel is currently enabled
-		 */
-		function channelAdded(trackId, sampleUrl, label, volume, on) {
+    /**
+     * Event listener hook for when a new channel is added.
+     * Creates a new UI track for said new channel.
+     *
+     * @param {Number} trackId Unique identifier for the channel/track
+     * @param {String} label
+     * @param {Number} volume (0-1)
+     * @param {Boolean} on Whether this channel is currently enabled
+     */
+    function channelAdded(trackId, sampleUrl, label, volume, on) {
 
-			var newTrack = getTrackById(trackId);
+      var newTrack = getTrackById(trackId);
 
-			if (newTrack === false) {
-
-				// Track not found yet, so create it and add to index
-				newTrack = new App.ui.Track(trackId);
-				tracks.push(newTrack);
-				rehashTrackIndex();
-
-				// Add to the grid
-				$grid.append(newTrack.getRow());
-			}
+      if (newTrack === false) {
+
+        // Track not found yet, so create it and add to index
+        newTrack = new App.ui.Track(trackId);
+        tracks.push(newTrack);
+        rehashTrackIndex();
+
+        // Add to the grid
+        $grid.append(newTrack.getRow());
+      }
 
-			// Set correct UI values
-			newTrack
-				.setSampleUrl(sampleUrl)
-				.setLabel(label)
-				.setVolume(volume)
-				.toggle(on);
-		}
+      // Set correct UI values
+      newTrack
+        .setSampleUrl(sampleUrl)
+        .setLabel(label)
+        .setVolume(volume)
+        .toggle(on);
+    }
 
 
-		/**
-		 * Event listener hook for when a channel gets removed.
-		 * Removes the ui Track from the DOM as well as the tracks array.
-		 *
-		 * @param {Number} trackId Unique ID
-		 */
-		function channelRemoved(trackId) {
+    /**
+     * Event listener hook for when a channel gets removed.
+     * Removes the ui Track from the DOM as well as the tracks array.
+     *
+     * @param {Number} trackId Unique ID
+     */
+    function channelRemoved(trackId) {
 
-			var
-				index = trackIndex[trackId],
-				trackToRemove;
+      var
+        index = trackIndex[trackId],
+        trackToRemove;
 
-			//Not found?
-			if (typeof index === 'undefined') { return; }
+      //Not found?
+      if (typeof index === 'undefined') { return; }
 
-			// Remove from array
-			trackToRemove = tracks.splice(index, 1)[0];
-			rehashTrackIndex();
+      // Remove from array
+      trackToRemove = tracks.splice(index, 1)[0];
+      rehashTrackIndex();
 
-			// Remove from grid
-			trackToRemove.getRow().remove();
-		}
+      // Remove from grid
+      trackToRemove.getRow().remove();
+    }
 
 
-		/**
-		 * Event listener hook for when a channel gets toggled.
-		 * This calls the toggle method on the corresponding Track instance.
-		 *
-		 * @param {Number} trackId
-		 * @param {Boolean} on
-		 */
-		function channelToggled(trackId, on) {
+    /**
+     * Event listener hook for when a channel gets toggled.
+     * This calls the toggle method on the corresponding Track instance.
+     *
+     * @param {Number} trackId
+     * @param {Boolean} on
+     */
+    function channelToggled(trackId, on) {
 
-			var track = getTrackById(trackId);
+      var track = getTrackById(trackId);
 
-			if (track === false) { return; }
+      if (track === false) { return; }
 
-			track.toggle(on);
-		}
+      track.toggle(on);
+    }
 
 
-		/**
-		 * Event listener hook for when a channel's volume changes.
-		 * This calls the volume change method on the corresponding Track instance.
-		 *
-		 * @param {Number} trackId
-		 * @param {Number} newVolume (0-1)
-		 */
-		function volumeChanged(trackId, newVolume) {
+    /**
+     * Event listener hook for when a channel's volume changes.
+     * This calls the volume change method on the corresponding Track instance.
+     *
+     * @param {Number} trackId
+     * @param {Number} newVolume (0-1)
+     */
+    function volumeChanged(trackId, newVolume) {
 
-			var track = getTrackById(trackId);
+      var track = getTrackById(trackId);
 
-			if (track === false) { return; }
+      if (track === false) { return; }
 
-			track.setVolume(newVolume);
-		}
+      track.setVolume(newVolume);
+    }
 
 
-		/**
-		 * Event listener hook for when a channel's sample changes.
-		 * Updates the label on the corresponding Track instance.
-		 *
-		 * @param  {Number} trackId   [description]
-		 * @param  {String} sampleUrl (unused here)
-		 * @param  {String} label File name minus extension
-		 */
-		function sampleChanged(trackId, sampleUrl, label) {
+    /**
+     * Event listener hook for when a channel's sample changes.
+     * Updates the label on the corresponding Track instance.
+     *
+     * @param  {Number} trackId   [description]
+     * @param  {String} sampleUrl (unused here)
+     * @param  {String} label File name minus extension
+     */
+    function sampleChanged(trackId, sampleUrl, label) {
 
-			var track = getTrackById(trackId);
+      var track = getTrackById(trackId);
 
-			if (track === false) { return; }
+      if (track === false) { return; }
 
-			track.setSampleUrl(sampleUrl).setLabel(label);
-		}
+      track.setSampleUrl(sampleUrl).setLabel(label);
+    }
 
 
-		/**
-		 * Event listener hook for when a step on a track gets toggled.
-		 * This calls the step toggle method on the corresponding Track instance.
-		 *
-		 * @param {Number} trackId
-		 * @param {Number} stepIndex
-		 * @param {Boolean} on
-		 */
-		function stepToggled(trackId, stepIndex, on) {
+    /**
+     * Event listener hook for when a step on a track gets toggled.
+     * This calls the step toggle method on the corresponding Track instance.
+     *
+     * @param {Number} trackId
+     * @param {Number} stepIndex
+     * @param {Boolean} on
+     */
+    function stepToggled(trackId, stepIndex, on) {
 
-			var track = getTrackById(trackId);
+      var track = getTrackById(trackId);
 
-			if (track === false) { return; }
+      if (track === false) { return; }
 
-			track.toggleStep(stepIndex, on);
-		}
+      track.toggleStep(stepIndex, on);
+    }
 
 
-		/**
-		 * Event listener hook when we tick another step.
-		 * Triggers the tick method on all tracks
-		 *
-		 * @param  {Number} stepIndex
-		 */
-		function stepTick(stepIndex) {
+    /**
+     * Event listener hook when we tick another step.
+     * Triggers the tick method on all tracks
+     *
+     * @param  {Number} stepIndex
+     */
+    function stepTick(stepIndex) {
 
-			var i;
+      var i;
 
-			for (i = 0; i < tracks.length; i += 1) {
-				tracks[i].stepTick(stepIndex);
-			}
-		}
+      for (i = 0; i < tracks.length; i += 1) {
+        tracks[i].stepTick(stepIndex);
+      }
+    }
 
 
-		// ## Initialization
+    // ## Initialization
 
-		// Store instance in this file's closure for retrieval in case it gets
-		// overridden.
-		instance = this;
-		App.ui.trackManager = instance;
+    // Store instance in this file's closure for retrieval in case it gets
+    // overridden.
+    instance = this;
+    App.ui.trackManager = instance;
 
 
-		$addButton = $('<button>').html('Add channel')
-			.click(function () {
+    $addButton = $('<button>').html('Add channel')
+      .click(function () {
 
-				App.ui.SamplePicker({
-					content: 'Select a sample for the new channel',
+        App.ui.SamplePicker({
+          content: 'Select a sample for the new channel',
 
-					onClose: function (result) {
+          onClose: function (result) {
 
-						if (result === false) { return; }
+            if (result === false) { return; }
 
-						events.trigger('ui.channel.add.requested', result, instance);
-					}
-				});
+            events.trigger('ui.channel.add.requested', result, instance);
+          }
+        });
 
-			});
+      });
 
-		$controls.append($addButton);
+    $controls.append($addButton);
 
 
-		// Subscribe to some mothereffin events
-		events.subscribe({
-			'channel.added':   channelAdded,
-			'channel.removed': channelRemoved,
-			'channel.toggled': channelToggled,
-			'volume.changed':  volumeChanged,
-			'sample.changed':  sampleChanged,
-			'step.toggled':    stepToggled,
-			'step.tick':       stepTick
-		});
+    // Subscribe to some mothereffin events
+    events.subscribe({
+      'channel.added':   channelAdded,
+      'channel.removed': channelRemoved,
+      'channel.toggled': channelToggled,
+      'volume.changed':  volumeChanged,
+      'sample.changed':  sampleChanged,
+      'step.toggled':    stepToggled,
+      'step.tick':       stepTick
+    });
 
 
-		/**
-		 * Overriding constructor for TrackManager,
-		 * so it returns the existing instance.
-		 * Also make App.trackManager point at the instance
-		 *
-		 * @return {App.TrackManager}
-		 */
-		App.ui.TrackManager = function () {
-			if (App.ui.trackManager !== instance) {
-				App.ui.trackManager = instance;
-			}
+    /**
+     * Overriding constructor for TrackManager,
+     * so it returns the existing instance.
+     * Also make App.trackManager point at the instance
+     *
+     * @return {App.TrackManager}
+     */
+    App.ui.TrackManager = function () {
+      if (App.ui.trackManager !== instance) {
+        App.ui.trackManager = instance;
+      }
 
-			return instance;
-		};
-	};
+      return instance;
+    };
+  };
 
 }(window.STEPSEQUENCER, window.jQuery));

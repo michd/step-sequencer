@@ -1,220 +1,220 @@
 /*global window: true*/
 (function (App, $, Audio) {
-	"use strict";
+  "use strict";
 
-	App.namespace('ui');
+  App.namespace('ui');
 
-	App.ui.SamplePicker = function (options) {
+  App.ui.SamplePicker = function (options) {
 
-		// ## Private properties
+    // ## Private properties
 
-		var
-			/**
-			 * Audio player for previews
-			 * @type {HtmlAudioElement}
-			 */
-			previewPlayer = new Audio(),
+    var
+      /**
+       * Audio player for previews
+       * @type {HtmlAudioElement}
+       */
+      previewPlayer = new Audio(),
 
-			/**
-			 * The sample currently selected, usable for previewing
-			 * @type {String} Full URL
-			 */
-			selectedSample = '',
+      /**
+       * The sample currently selected, usable for previewing
+       * @type {String} Full URL
+       */
+      selectedSample = '',
 
-			/**
-			 * Sample url of the sample that should initially be selected
-			 * @type {String|Boolean} false if not specified
-			 */
-			presetSample = (options && typeof options.presetSample === 'string') ?
-					options.presetSample :
-					false,
+      /**
+       * Sample url of the sample that should initially be selected
+       * @type {String|Boolean} false if not specified
+       */
+      presetSample = (options && typeof options.presetSample === 'string') ?
+          options.presetSample :
+          false,
 
-			/**
-			 * Message to be displayed in the dialog above the selector and preview
-			 * @type {String}
-			 */
-			message = (options && typeof options.content !== 'undefined') ?
-					options.content :
-					'Please select a sample below',
+      /**
+       * Message to be displayed in the dialog above the selector and preview
+       * @type {String}
+       */
+      message = (options && typeof options.content !== 'undefined') ?
+          options.content :
+          'Please select a sample below',
 
-			/**
-			 * Optional callback whenever the selected sample changes
-			 * @type {Function}
-			 */
-			onChange = (options && typeof options.onChange === 'function') ?
-					options.onChange :
-					function () {},
+      /**
+       * Optional callback whenever the selected sample changes
+       * @type {Function}
+       */
+      onChange = (options && typeof options.onChange === 'function') ?
+          options.onChange :
+          function () {},
 
-			/**
-			 * Callback when the dialog is closed
-			 * @type {[type]}
-			 */
-			onClose = (options && typeof options.onClose === 'function') ?
-					options.onClose :
-					function () {},
+      /**
+       * Callback when the dialog is closed
+       * @type {[type]}
+       */
+      onClose = (options && typeof options.onClose === 'function') ?
+          options.onClose :
+          function () {},
 
-			/**
-			 * Custom dialog object once it's intialized
-			 * @type {App.ui.dialogs.Dialog}
-			 */
-			dialog = null;
-
-
-		// Force instantiation before continuing
-
-		if (this.constructor !== App.ui.SamplePicker) {
-			return new App.ui.SamplePicker(options);
-		}
+      /**
+       * Custom dialog object once it's intialized
+       * @type {App.ui.dialogs.Dialog}
+       */
+      dialog = null;
 
 
-		// ## Private methods
+    // Force instantiation before continuing
 
-		/**
-		 * When the selected sample changes, load it in the preview player
-		 *
-		 * @param  {String} newSelectedSample Full URL
-		 */
-		function selectionChanged(newSelectedSample) {
-
-			// Call onChange function from options
-			onChange(newSelectedSample);
-
-			previewPlayer.src = newSelectedSample;
-		}
+    if (this.constructor !== App.ui.SamplePicker) {
+      return new App.ui.SamplePicker(options);
+    }
 
 
-		/**
-		 * Start playing a preview of the currently selected sample
-		 */
-		function playPreview() {
-			previewPlayer.play();
-		}
+    // ## Private methods
+
+    /**
+     * When the selected sample changes, load it in the preview player
+     *
+     * @param  {String} newSelectedSample Full URL
+     */
+    function selectionChanged(newSelectedSample) {
+
+      // Call onChange function from options
+      onChange(newSelectedSample);
+
+      previewPlayer.src = newSelectedSample;
+    }
 
 
-		/**
-		 * Stops the preview player immediately
-		 */
-		function stopPreview() {
-			previewPlayer.currentTime = 0;
-			previewPlayer.pause();
-		}
+    /**
+     * Start playing a preview of the currently selected sample
+     */
+    function playPreview() {
+      previewPlayer.play();
+    }
 
 
-		/**
-		 * Does whatever with the end result - selected sample
-		 *
-		 * @param  {String|Boolean} result False when cancelled
-		 */
-		function closed(result) {
-			stopPreview();
-			onClose(result);
-		}
+    /**
+     * Stops the preview player immediately
+     */
+    function stopPreview() {
+      previewPlayer.currentTime = 0;
+      previewPlayer.pause();
+    }
 
 
-		// Init
-		(function () {
-
-			var
-				//options hash used for dialo constructor
-				dialogOptions = {},
-				// reference to the sample library
-				library = App.sampleLibrary,
-				i,
-				$dropdown = $('<select>'),
-				optionAttributes = {},
-				$previewButton = $('<button>').html('Preview');
-
-			// Init previewPlayer
-			previewPlayer.volume = 1;
-			previewPlayer.preload      = 'auto';
-			previewPlayer.autobuffer   = 'autobuffer';
+    /**
+     * Does whatever with the end result - selected sample
+     *
+     * @param  {String|Boolean} result False when cancelled
+     */
+    function closed(result) {
+      stopPreview();
+      onClose(result);
+    }
 
 
-			// Populate the new content (message, dropdown, preview button)
-			dialogOptions.content = $('<div>').append(
-				$('<p>').html(message),
-				$dropdown,
-				$previewButton
-			);
+    // Init
+    (function () {
+
+      var
+        //options hash used for dialo constructor
+        dialogOptions = {},
+        // reference to the sample library
+        library = App.sampleLibrary,
+        i,
+        $dropdown = $('<select>'),
+        optionAttributes = {},
+        $previewButton = $('<button>').html('Preview');
+
+      // Init previewPlayer
+      previewPlayer.volume = 1;
+      previewPlayer.preload      = 'auto';
+      previewPlayer.autobuffer   = 'autobuffer';
 
 
-			// Add OK and Cancel buttons
-			dialogOptions.buttons = [
-				{label: 'Cancel', action: 'cancelDialog'},
-				{label: 'Ok', action: 'closeDialog'}
-			];
+      // Populate the new content (message, dropdown, preview button)
+      dialogOptions.content = $('<div>').append(
+        $('<p>').html(message),
+        $dropdown,
+        $previewButton
+      );
 
 
-			// Close callback
-			dialogOptions.onClose = closed;
+      // Add OK and Cancel buttons
+      dialogOptions.buttons = [
+        {label: 'Cancel', action: 'cancelDialog'},
+        {label: 'Ok', action: 'closeDialog'}
+      ];
 
 
-			// Got all we need for the dialog, instantiate.
-			dialog = new App.ui.dialogs.Dialog(dialogOptions);
+      // Close callback
+      dialogOptions.onClose = closed;
 
 
-			// Populate our earlier elements and attach listeners and whatnot
-
-			// Init sample list in dropdown
-			// Populate list
-			for (i = 0; i < library.length; i += 1) {
-
-				optionAttributes = {
-					value: library[i].value
-				};
-
-				if (presetSample === library[i].value) {
-					optionAttributes.selected = 'selected';
-				}
-
-				$dropdown.append(
-					$('<option>', optionAttributes).html(library[i].label)
-				);
-			}
+      // Got all we need for the dialog, instantiate.
+      dialog = new App.ui.dialogs.Dialog(dialogOptions);
 
 
-			// Listen for changes in selection
-			$dropdown.change(function () {
+      // Populate our earlier elements and attach listeners and whatnot
 
-				// Change the dialog's return value for when it closes
-				dialog.returnValue = $dropdown.val();
+      // Init sample list in dropdown
+      // Populate list
+      for (i = 0; i < library.length; i += 1) {
 
-				selectionChanged(dialog.returnValue);
-			});
+        optionAttributes = {
+          value: library[i].value
+        };
 
+        if (presetSample === library[i].value) {
+          optionAttributes.selected = 'selected';
+        }
 
-			//Handle preview button clicks
-			$previewButton.click(function (event) {
-
-				if (!$(this).hasClass('playing')) {
-
-					playPreview();
-					$(this).addClass('playing').html('Stop preview');
-
-				} else {
-
-					stopPreview();
-					$(this).removeClass('playing').html('Preview');
-				}
-			});
+        $dropdown.append(
+          $('<option>', optionAttributes).html(library[i].label)
+        );
+      }
 
 
-			// When preview player finishes playing, revert button
-			$(previewPlayer).bind('ended', function () {
+      // Listen for changes in selection
+      $dropdown.change(function () {
 
-				$previewButton.removeClass('playing').html('Preview');
+        // Change the dialog's return value for when it closes
+        dialog.returnValue = $dropdown.val();
 
-			});
+        selectionChanged(dialog.returnValue);
+      });
 
 
-			// Trigger change to load the initial sample
-			$dropdown.change();
+      //Handle preview button clicks
+      $previewButton.click(function (event) {
 
-			// Just spawn it
-			dialog.spawn();
+        if (!$(this).hasClass('playing')) {
 
-		}()); // End init
+          playPreview();
+          $(this).addClass('playing').html('Stop preview');
 
-	};
+        } else {
+
+          stopPreview();
+          $(this).removeClass('playing').html('Preview');
+        }
+      });
+
+
+      // When preview player finishes playing, revert button
+      $(previewPlayer).bind('ended', function () {
+
+        $previewButton.removeClass('playing').html('Preview');
+
+      });
+
+
+      // Trigger change to load the initial sample
+      $dropdown.change();
+
+      // Just spawn it
+      dialog.spawn();
+
+    }()); // End init
+
+  };
 
 }(window.STEPSEQUENCER, window.jQuery, window.Audio));

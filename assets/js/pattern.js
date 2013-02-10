@@ -1,296 +1,296 @@
 /*global window: true*/
 (function (App) {
-	"use strict";
+  "use strict";
 
-	var
-		/**
-		 * Storage for the single App.Pattern instance once it's initialized
-		 * @type {App.Pattern}
-		 */
-		instance,
+  var
+    /**
+     * Storage for the single App.Pattern instance once it's initialized
+     * @type {App.Pattern}
+     */
+    instance,
 
-		events = App.eventDispatcher;
+    events = App.eventDispatcher;
 
 
-	/**
-	 * Singleton pattern module, simply holds the on/off status for every step
-	 * on every track.
-	 *
-	 */
-	App.Pattern = function () {
+  /**
+   * Singleton pattern module, simply holds the on/off status for every step
+   * on every track.
+   *
+   */
+  App.Pattern = function () {
 
-		// ## Private properties
+    // ## Private properties
 
-		var
+    var
 
-			/**
-			 * Array of objects containing channelId and step array for each channel
-			 * @type {Array}
-			 */
-			patterns = [],
+      /**
+       * Array of objects containing channelId and step array for each channel
+       * @type {Array}
+       */
+      patterns = [],
 
-			/**
-			 * Keep a quick channelId: patterns array index lookup handy
-			 * This is for getChannelById lookups, only updated when channels are
-			 * removed or added.
-			 * @type {Object}
-			 */
-			channelIndex = {},
+      /**
+       * Keep a quick channelId: patterns array index lookup handy
+       * This is for getChannelById lookups, only updated when channels are
+       * removed or added.
+       * @type {Object}
+       */
+      channelIndex = {},
 
-			/**
-			 * Current progress through the pattern, as a step index
-			 * @type {Number}
-			 */
-			currentStep = -1,
+      /**
+       * Current progress through the pattern, as a step index
+       * @type {Number}
+       */
+      currentStep = -1,
 
-			/**
-			 * Number of steps we want for each channel, for populating.
-			 * @type {Number}
-			 */
-			stepsPerChannel = 16,
+      /**
+       * Number of steps we want for each channel, for populating.
+       * @type {Number}
+       */
+      stepsPerChannel = 16,
 
-			/**
-			 * Reference to self for in functions
-			 * @type {App.Pattern}
-			 */
-			self = this;
+      /**
+       * Reference to self for in functions
+       * @type {App.Pattern}
+       */
+      self = this;
 
 
-		// Force instantiation before continuing
+    // Force instantiation before continuing
 
-		if (this.constructor !== App.Pattern) {
-			return new App.Pattern();
-		}
-
-
-		// ## Private methods
+    if (this.constructor !== App.Pattern) {
+      return new App.Pattern();
+    }
+
+
+    // ## Private methods
 
-		/**
-		 * Ensures the channelIndex lookup dictionary is up to date with
-		 * the patterns array
-		 */
-		function rehashChannelIndex() {
-
-			var i;
+    /**
+     * Ensures the channelIndex lookup dictionary is up to date with
+     * the patterns array
+     */
+    function rehashChannelIndex() {
+
+      var i;
 
-			// Empty current index
-			channelIndex = {};
+      // Empty current index
+      channelIndex = {};
 
-			// Fill with current data
-			for (i = 0; i < patterns.length; i += 1) {
-				channelIndex[patterns[i].channelId] = i;
-			}
-		}
+      // Fill with current data
+      for (i = 0; i < patterns.length; i += 1) {
+        channelIndex[patterns[i].channelId] = i;
+      }
+    }
 
 
-		/**
-		 * Add or remove steps from each channel in patterns to make it match
-		 * desiredStepcount
-		 *
-		 * @param  {Number} desiredStepCount
-		 */
-		function correctStepCount(desiredStepCount) {
+    /**
+     * Add or remove steps from each channel in patterns to make it match
+     * desiredStepcount
+     *
+     * @param  {Number} desiredStepCount
+     */
+    function correctStepCount(desiredStepCount) {
 
-			var i, j;
+      var i, j;
 
-			// Already correct?
-			if (stepsPerChannel === desiredStepCount) { return; }
+      // Already correct?
+      if (stepsPerChannel === desiredStepCount) { return; }
 
-			// More needed than we currently have:
-			if (desiredStepCount > stepsPerChannel) {
+      // More needed than we currently have:
+      if (desiredStepCount > stepsPerChannel) {
 
-				for (i = 0; i < desiredStepCount - stepsPerChannel; i += 1) {
-					for (j = 0; j < patterns.length; j += 1) {
-						patterns[j].steps.push(false);
-					}
-				}
+        for (i = 0; i < desiredStepCount - stepsPerChannel; i += 1) {
+          for (j = 0; j < patterns.length; j += 1) {
+            patterns[j].steps.push(false);
+          }
+        }
 
-			} else { // Need less than we have now
+      } else { // Need less than we have now
 
-				for (j = 0; j < patterns.length; j += 1) {
-					patterns[j].steps = patterns[j].steps.slice(0, desiredStepCount);
-				}
-			}
+        for (j = 0; j < patterns.length; j += 1) {
+          patterns[j].steps = patterns[j].steps.slice(0, desiredStepCount);
+        }
+      }
 
-			// Update stepsPerChannel
-			stepsPerChannel = desiredStepCount;
-		}
+      // Update stepsPerChannel
+      stepsPerChannel = desiredStepCount;
+    }
 
 
-		/**
-		 * Retrieve a channel object from the pattern array by its unique ID
-		 *
-		 * @param  {Number} channelId
-		 * @return {Object}
-		 * @note This only returns a flat object from the patterns array, not an
-		 * App.Channel object. No tight coupling here.
-		 */
-		function getChannelById(channelId) {
+    /**
+     * Retrieve a channel object from the pattern array by its unique ID
+     *
+     * @param  {Number} channelId
+     * @return {Object}
+     * @note This only returns a flat object from the patterns array, not an
+     * App.Channel object. No tight coupling here.
+     */
+    function getChannelById(channelId) {
 
-			if (typeof channelIndex[channelId] === 'undefined') { return false; }
+      if (typeof channelIndex[channelId] === 'undefined') { return false; }
 
-			if (typeof patterns[channelIndex[channelId]] === 'undefined') {
-				return false;
-			}
+      if (typeof patterns[channelIndex[channelId]] === 'undefined') {
+        return false;
+      }
 
-			return patterns[channelIndex[channelId]];
-		}
+      return patterns[channelIndex[channelId]];
+    }
 
 
-		/**
-		 * Add a channel to the patterns array and fill it up with steps
-		 * (as many as stepsPerChannel indicates)
-		 *
-		 * @param {Number} channelId
-		 */
-		function addChannel(channelId) {
+    /**
+     * Add a channel to the patterns array and fill it up with steps
+     * (as many as stepsPerChannel indicates)
+     *
+     * @param {Number} channelId
+     */
+    function addChannel(channelId) {
 
-			var
-				channel = getChannelById(channelId) || {channelId: channelId},
-				isNew = typeof channel.steps === 'undefined',
-				i;
+      var
+        channel = getChannelById(channelId) || {channelId: channelId},
+        isNew = typeof channel.steps === 'undefined',
+        i;
 
-			channel.steps = [];
+      channel.steps = [];
 
-			// Fill with steps that are off
-			for (i = 0; i < stepsPerChannel; i += 1) {
-				channel.steps.push(false);
-			}
+      // Fill with steps that are off
+      for (i = 0; i < stepsPerChannel; i += 1) {
+        channel.steps.push(false);
+      }
 
-			// If this is a newly created channel, add it to patterns
-			if (isNew) {
-				patterns.push(channel);
-				rehashChannelIndex();
-			}
-		}
+      // If this is a newly created channel, add it to patterns
+      if (isNew) {
+        patterns.push(channel);
+        rehashChannelIndex();
+      }
+    }
 
 
-		/**
-		 * Remove a channel from the patterns array
-		 *
-		 * @param  {Number} channelId
-		 */
-		function removeChannel(channelId) {
+    /**
+     * Remove a channel from the patterns array
+     *
+     * @param  {Number} channelId
+     */
+    function removeChannel(channelId) {
 
-			var channelPatternIndex = channelIndex[channelId];
+      var channelPatternIndex = channelIndex[channelId];
 
-			// Not found?
-			if (typeof channelPatternIndex === 'undefined') { return; }
+      // Not found?
+      if (typeof channelPatternIndex === 'undefined') { return; }
 
-			// Remove from array
-			patterns.splice(channelPatternIndex, 1);
+      // Remove from array
+      patterns.splice(channelPatternIndex, 1);
 
-			rehashChannelIndex();
-		}
+      rehashChannelIndex();
+    }
 
 
-		/**
-		 * Set on/off status of a step in the pattern
-		 *
-		 * @param {Number} channelId
-		 * @param {Number} stepIndex
-		 * @param {Boolean} on
-		 */
-		function stepToggled(channelId, stepIndex, on) {
+    /**
+     * Set on/off status of a step in the pattern
+     *
+     * @param {Number} channelId
+     * @param {Number} stepIndex
+     * @param {Boolean} on
+     */
+    function stepToggled(channelId, stepIndex, on) {
 
-			var channel = getChannelById(channelId);
+      var channel = getChannelById(channelId);
 
-			if (!channel) { return; }
+      if (!channel) { return; }
 
-			// Make sure we don't accidentally create new steps through toggle
-			if (typeof channel.steps[stepIndex] === 'undefined') { return; }
+      // Make sure we don't accidentally create new steps through toggle
+      if (typeof channel.steps[stepIndex] === 'undefined') { return; }
 
-			// Cast to boolean just in case
-			channel.steps[stepIndex] = !!on;
-		}
+      // Cast to boolean just in case
+      channel.steps[stepIndex] = !!on;
+    }
 
 
-		/**
-		 * Clears all the steps of every channel
-		 */
-		function clearPattern() {
+    /**
+     * Clears all the steps of every channel
+     */
+    function clearPattern() {
 
-			var
-				i,
-				emptyPattern = [];
+      var
+        i,
+        emptyPattern = [];
 
-			for (i = 0; i < stepsPerChannel; i += 1) {
-				emptyPattern.push(false);
-			}
+      for (i = 0; i < stepsPerChannel; i += 1) {
+        emptyPattern.push(false);
+      }
 
-			for (i = 0; i < patterns.length; i += 1) {
-				// Slice for shallow copy
-				patterns[i].steps = emptyPattern.slice(0, stepsPerChannel);
-			}
-		}
+      for (i = 0; i < patterns.length; i += 1) {
+        // Slice for shallow copy
+        patterns[i].steps = emptyPattern.slice(0, stepsPerChannel);
+      }
+    }
 
 
-		/**
-		 * Resets the current step back to the beginning
-		 */
-		function resetCurrentStep() {
-			currentStep = -1;
-		}
+    /**
+     * Resets the current step back to the beginning
+     */
+    function resetCurrentStep() {
+      currentStep = -1;
+    }
 
 
-		/**
-		 * Every step tick, advance currentStep and trigger any channels that have
-		 * a step that's on
-		 */
-		function tick() {
+    /**
+     * Every step tick, advance currentStep and trigger any channels that have
+     * a step that's on
+     */
+    function tick() {
 
-			var i;
+      var i;
 
-			currentStep += 1;
+      currentStep += 1;
 
-			if (currentStep > (stepsPerChannel - 1)) {
-				currentStep = 0;
-			}
+      if (currentStep > (stepsPerChannel - 1)) {
+        currentStep = 0;
+      }
 
-			events.trigger('step.tick', currentStep);
+      events.trigger('step.tick', currentStep);
 
-			for (i = 0; i < patterns.length; i += 1) {
-				if (patterns[i].steps[currentStep]) {
-					events.trigger('channel.triggered', patterns[i].channelId);
-				}
-			}
-		}
+      for (i = 0; i < patterns.length; i += 1) {
+        if (patterns[i].steps[currentStep]) {
+          events.trigger('channel.triggered', patterns[i].channelId);
+        }
+      }
+    }
 
 
-		// ## Initialization
+    // ## Initialization
 
-		// Store instance in this file's closure for retrieval in case it gets
-		// overridden.
-		instance = this;
-		App.pattern = instance;
+    // Store instance in this file's closure for retrieval in case it gets
+    // overridden.
+    instance = this;
+    App.pattern = instance;
 
 
-		// Subscribe to some mothereffin events
-		events.subscribe({
-			'steps-per-channel.update': correctStepCount,
-			'channel.added':            addChannel,
-			'channel.removed':          removeChannel,
-			'ui.step.toggled':          stepToggled,
-			'ui.pattern.clear':         clearPattern,
-			'ui.transport.reset':       resetCurrentStep,
-			'tempo.step':               tick
-		});
+    // Subscribe to some mothereffin events
+    events.subscribe({
+      'steps-per-channel.update': correctStepCount,
+      'channel.added':            addChannel,
+      'channel.removed':          removeChannel,
+      'ui.step.toggled':          stepToggled,
+      'ui.pattern.clear':         clearPattern,
+      'ui.transport.reset':       resetCurrentStep,
+      'tempo.step':               tick
+    });
 
 
-		/**
-		 * Overriding constructor for Pattern, so it returns the existing instance.
-		 * Also make App.pattern point at the instance
-		 *
-		 * @return {App.Pattern}
-		 */
-		App.Pattern = function () {
+    /**
+     * Overriding constructor for Pattern, so it returns the existing instance.
+     * Also make App.pattern point at the instance
+     *
+     * @return {App.Pattern}
+     */
+    App.Pattern = function () {
 
-			if (App.pattern !== instance) {
-				App.pattern = instance;
-			}
+      if (App.pattern !== instance) {
+        App.pattern = instance;
+      }
 
-			return instance;
-		};
-	};
+      return instance;
+    };
+  };
 
 }(window.STEPSEQUENCER));
