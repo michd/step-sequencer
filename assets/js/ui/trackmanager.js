@@ -117,7 +117,7 @@
 		 * @param {Number} volume (0-1)
 		 * @param {Boolean} on Whether this channel is currently enabled
 		 */
-		function channelAdded(trackId, label, volume, on) {
+		function channelAdded(trackId, sampleUrl, label, volume, on) {
 
 			var newTrack = getTrackById(trackId);
 
@@ -134,6 +134,7 @@
 
 			// Set correct UI values
 			newTrack
+				.setSampleUrl(sampleUrl)
 				.setLabel(label)
 				.setVolume(volume)
 				.toggle(on);
@@ -212,7 +213,7 @@
 
 			if (track === false) { return; }
 
-			track.setLabel(label);
+			track.setSampleUrl(sampleUrl).setLabel(label);
 		}
 
 

@@ -50,6 +50,12 @@
       trackName = 'Track #' + trackId,
 
       /**
+       * Keep track of the full url of the sample for sample picking
+       * @type {String}
+       */
+      sampleUrl,
+
+      /**
        * Options for jQuery Kontrol's dial, used for the volume control
        * @type {Object}
        */
@@ -244,36 +250,49 @@
     // Label clicked (edit)
     $tr.on('click', 'th label', function () {
 
-      var oldValue = $(this).html();
-
       $(this).replaceWith(
         $('<input>', {type: 'text', value: $(this).html(), autofocus: 'autofocus'})
           .keypress(function (event) {
 
             // commit
             if (event.keyCode === 13) {
-              $(this).replaceWith($('<label>').html($(this).val()));
+              trackName = $(this).val();
+              $(this).replaceWith($('<label>').html(trackName));
               events.trigger('ui.label.updated', [trackId, $(this).val()]);
             }
 
             // cancel
             if (event.keyCode === 27) {
-              $(this).replaceWith($('<label>').html(oldValue));
+              $(this).replaceWith($('<label>').html(trackName));
             }
           })
           .blur(function (event) {
-            $(this).replaceWith($('<label>').html(oldValue));
+            $(this).replaceWith($('<label>').html(trackName));
           })
       );
     });
 
     // Replace button clicked
     $tr.on('click', 'th .replace', function () {
-      events.trigger(
-        'ui.sample.replace.requested', // Event name
-        [trackId, $tr.find('th label').html()], // Parameters
-        this // Context
-      );
+
+      App.ui.SamplePicker({
+        content: 'Replace sample #' + (trackId + 1) + ' for ' + trackName,
+
+        presetSample: sampleUrl,
+
+        onChange: function (testSample) {
+          events.trigger('ui.sample.try', [trackId, testSample]);
+        },
+
+        onClose: function (result) {
+          if (result === false) {
+            events.trigger('ui.sample.reset', trackId);
+          } else {
+            events.trigger('ui.sample.change', [trackId, result]);
+          }
+        }
+      });
+
     });
 
 
@@ -345,9 +364,22 @@
      * @return {App.ui.Track} self
      */
     this.setLabel = function (newLabel) {
-      $tr.find('th label').html(newLabel);
+      trackName = newLabel;
+      $tr.find('th label').html(trackName);
       return self;
     };
+
+
+    /**
+     * Updates the sample url for this track/channel
+     *
+     * @param {String} newSampleUrl
+     * @return {App.ui.Track} self
+     */
+    this.setSampleUrl = function (newSampleUrl) {
+      sampleUrl = newSampleUrl;
+      return self;
+    }
 
 
     /**

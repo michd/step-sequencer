@@ -40,45 +40,6 @@
     });
 
 
-    // Listen to UI for sample replace requests
-    // TODO: move to App.ui.Track and get rid of this event
-    events.subscribe(
-      'ui.sample.replace.requested',
-      function (channelId, trackLabel) {
-
-        var
-          channel = channels[channelId],
-          currentSampleUrl = channel.getSampleUrl();
-
-        App.ui.SamplePicker({ // will instantiate automatically
-
-          content: 'Replace sample #' + (channelId + 1) + ' for ' + trackLabel,
-
-          //TODO: figure out a clean way to get the selected sample in here
-
-          onChange: function (testSample) {
-            channel.setSample(testSample);
-          },
-
-          onClose: function (result) {
-
-            if (result === false) {
-              channel.setSample(currentSampleUrl);
-            } else {
-
-              channel.setSample(result);
-              events.trigger(
-                'sample.changed.channel-' + channelId,
-                [result, channel.getLabel()],
-                App
-              );
-
-            }
-          }
-        }); // Sample picker init
-      }
-    );
-
     // Init pattern singleton
     App.Pattern();
 
