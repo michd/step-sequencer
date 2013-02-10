@@ -113,6 +113,8 @@
       // If we already have the right amount of steps, don't bother.
       if (stepsNeeded === stepsCollection.length) { return; }
 
+      events.trigger('steps-per-channel.update', stepsNeeded);
+
       // Add or remove steps as appropriate
       if (stepsNeeded >= stepsCollection.length) {
 
@@ -158,7 +160,7 @@
 
       // Build structure inside table row
       for (iMeasures = 0; iMeasures < measures; iMeasures += 1) {
-        evenMeasure = (iMeasures % 2 === 0);
+        evenMeasure = (iMeasures % 2 !== 0);
         for (iBeats = 0; iBeats < beatsPerMeasure; iBeats += 1) {
 
           $curTd = $('<td>', {"class": (evenMeasure ? 'measure-even' : '')});
@@ -400,7 +402,7 @@
     this.setSampleUrl = function (newSampleUrl) {
       sampleUrl = newSampleUrl;
       return self;
-    }
+    };
 
 
     /**
@@ -428,7 +430,7 @@
       var
         $step = $(stepsCollection[stepIndex]),
         on = $step.hasClass('on'),
-        trackEnabled  = ! $tr.hasClass('disabled');
+        trackEnabled  = !$tr.hasClass('disabled');
 
       if (trackEnabled) {
         $tr.removeClass('flash').toggleClass('triggered', on);

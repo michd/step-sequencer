@@ -197,6 +197,7 @@
     function start() {
       isPlaying = true;
       step();
+      events.trigger('tempo.started');
     }
 
 
@@ -206,6 +207,7 @@
     function stop() {
       isPlaying = false;
       clearTimeout(stepTimeout);
+      events.trigger('tempo.paused');
     }
 
 
@@ -230,6 +232,9 @@
       newBpm = Math.max(MIN_BPM, Math.min(newBpm, MAX_BPM));
       bpm = newBpm;
       updateStepInterval();
+
+      events.trigger('tempo.updated', bpm);
+
       return self;
     };
 
@@ -263,10 +268,20 @@
         Math.min(Math.round(newBeatsPerMeasure), MAX_BEATS_PER_MEASURE)
       );
 
+      events.trigger(
+        'tempo.timesignature.beatspermeasure.changed',
+        beatsPerMeasure
+      );
+
       // Sanitize / correct beatLength so it works properly with this system
       beatLength = nearestIntResultDenominator(
         STEPS_PER_WHOLE_NOTE,
         Math.max(1, Math.min(Math.round(newBeatLength), STEPS_PER_WHOLE_NOTE))
+      );
+
+      events.trigger(
+        'tempo.timesignature.beatlength.changed',
+        beatLength
       );
 
       updateStepInterval();
@@ -367,6 +382,15 @@
     // overridden.
     instance = this;
     App.tempo = instance;
+
+    // Subscribe to some mothereffin events
+    events.subscribe({
+      'ui.transport.play': function () { self.toggle(true); },
+      'ui.transport.pause': function () { self.toggle(false); },
+      'ui.transport.stop': function () { self.toggle(false); },
+      'ui.transport.tempo.change': this.setBpm,
+      'ui.transport.timesignature.change': this.setTimeSignature
+    });
 
     // Initialize step interval
     updateStepInterval();

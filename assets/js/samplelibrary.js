@@ -1,3 +1,4 @@
+/*global window: true*/
 (function (App) {
   "use strict";
 

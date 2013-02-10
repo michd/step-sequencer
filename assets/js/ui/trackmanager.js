@@ -29,6 +29,12 @@
 
     var
       /**
+       * Constant number of steps that make up a whole note
+       * @type {Number}
+       */
+      STEPS_PER_NOTE = 16,
+
+      /**
        * Holds all App.ui.Track objects
        * @type {Array}
        */
@@ -249,6 +255,50 @@
     }
 
 
+    /**
+     * Events listener hook when the time signature changes.
+     *
+     * @param  {Number} newBeatsPerMeasure
+     */
+    function beatsPerMeasureChanged(newBeatsPerMeasure) {
+      var i;
+
+      for (i = 0; i < tracks.length; i += 1) {
+        tracks[i].setBeatsPerMeasure(newBeatsPerMeasure);
+      }
+    }
+
+
+    /**
+     * Event listener hook for when the time signature changes.
+     *
+     * @param  {Number} newBeatLength
+     */
+    function beatLengthChanged(newBeatLength) {
+      var
+        i,
+        stepsPerBeat = Math.round(STEPS_PER_NOTE / newBeatLength);
+
+      for (i = 0; i < tracks.length; i += 1) {
+        tracks[i].setStepsPerBeat(stepsPerBeat);
+      }
+    }
+
+
+    /**
+     * Event listener hook for when the number of measures changes.
+     *
+     * @param  {Number} newMeasures
+     */
+    function measuresChanged(newMeasures) {
+      var i;
+
+      for (i = 0; i < tracks.length; i += 1) {
+        tracks[i].setMeasures(newMeasures);
+      }
+    }
+
+
     // ## Initialization
 
     // Store instance in this file's closure for retrieval in case it gets
@@ -284,7 +334,10 @@
       'volume.changed':  volumeChanged,
       'sample.changed':  sampleChanged,
       'step.toggled':    stepToggled,
-      'step.tick':       stepTick
+      'step.tick':       stepTick,
+      'tempo.timesignature.beatspermeasure.changed': beatsPerMeasureChanged,
+      'tempo.timesignature.beatlength.changed': beatLengthChanged,
+      'ui.transport.measures.change': measuresChanged
     });
 
 

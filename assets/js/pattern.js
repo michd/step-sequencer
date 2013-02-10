@@ -272,7 +272,7 @@
       'channel.removed':          removeChannel,
       'ui.step.toggled':          stepToggled,
       'ui.pattern.clear':         clearPattern,
-      'ui.transport.reset':       resetCurrentStep,
+      'ui.transport.stop':        resetCurrentStep,
       'tempo.step':               tick
     });
 

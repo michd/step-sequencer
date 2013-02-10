@@ -178,8 +178,8 @@
     /**
      * Event listener for when the UI decides it wants to get rid of a channel
      * Removes the channel from
-     * @param  {[type]} channelId [description]
-     * @return {[type]}           [description]
+     * @param  {[type]} channelId
+     * @return {[type]}
      */
     function channelRemoved(channelId) {
 

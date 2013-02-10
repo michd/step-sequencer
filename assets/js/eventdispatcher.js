@@ -173,11 +173,11 @@
 
   // Make sure console.log is a thing.
   if (typeof console === 'undefined') {
-    console = {log: function() {}};
+    console = {log: function () {}};
   }
 
   if (typeof console.log !== 'function') {
-    console.log = function() {};
+    console.log = function () {};
   }
 
 

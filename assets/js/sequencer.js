@@ -1,52 +1,31 @@
 /*global window: true, document: true*/
 (function (App, $) {
   "use strict";
-  var
-    al = '/content/audio/2002DANC/',
-    events = App.eventDispatcher;
+
+  var al = '/content/audio/2002DANC/';
 
   $(document).ready(function () {
 
-    function reset() {
-      events.trigger('ui.transport.reset');
-    }
+    // INIT ALL THE THINGS
 
-    function play() {
-      reset();
-      //todo: use event
-      App.tempo.toggle(true);
-    }
-
-    // Init time keeper singleton
-    App.Tempo();
-
-    // Todo: simple ui transport module triggering events?
-    $('#play').click(play);
-    $('#stop').click(function () {
-      reset();
-      App.tempo.toggle(false);
-    });
-
-    //todo: trigger proper event
-    $('#tempo').change(function () {
-      $(this).val(App.tempo.setBpm(parseInt($(this).val(), 10)).getBpm());
-    });
-
-
-    // Init pattern singleton
-    App.Pattern();
-
-    // Init TrackManager singleton
+    // Initialize main UI components
     App.ui.TrackManager('#grid', '#trackmanager');
 
-    // Init ChannelManager singleton and add some initial channels
+    App.ui.Transport('#transport');
+
+
+    // Time keeper
+    App.Tempo();
+
+    // Keeps all the ons and offs
+    App.Pattern();
+
+    // Allow playing some sounds
     App.ChannelManager()
       .addChannel(al + 'KIK_1.wav')
       .addChannel(al + 'CLAP.wav')
       .addChannel(al + 'HAT_7.wav')
-      .addChannel(al + 'OP_HAT.wav')
-      .addChannel(al + 'RIDE_CYM.wav')
-
-
+      .addChannel(al + 'SN_2.wav');
   });
+
 }(window.STEPSEQUENCER, window.jQuery));

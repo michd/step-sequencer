@@ -46,8 +46,16 @@ footer {
 
 
 /* Sequencer styles */
-#transport {
-  margin-bottom: 30px;
+#transport, #trackmanager {
+  margin-bottom: 20px;
+}
+
+#transport label {
+  margin-left: 15px;
+}
+
+#transport input[type=text] {
+  width: 30px;
 }
 
 
@@ -102,22 +110,30 @@ tr th canvas {
 }
 
 td {
-  padding: 0 10px;
+  padding: 0 5px;
 }
 
 td:nth-child(even) {
   background-color: #E5E5E5;
 }
 
+td.measure-even {
+  background-color: #CCC;
+}
+
+td.measure-even:nth-child(odd) {
+  background-color: #C5C5C5;
+}
+
 .step {
-  width: 25px;
+  width: 15px;
   height: 25px;
   margin: 0 1px;
   float: left;
   border: solid 1px black;
   text-align: center;
   line-height: 25px;
-  border-radius: 7px;
+  border-radius: 4px;
 }
 
 .step.on {
