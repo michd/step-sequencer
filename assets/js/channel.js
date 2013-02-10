@@ -49,6 +49,12 @@
       sampleUrl = (typeof initSampleUrl === 'string') ? initSampleUrl : '',
 
       /**
+       * Backup of sampleUrl when trying out new samples.
+       * @type {String}
+       */
+      backupSampleUrl = sampleUrl,
+
+      /**
        * Label for display in the UI
        * @type {String}
        */
@@ -296,10 +302,52 @@
       }
 
       sampleUrl = newSampleUrl;
+
+      // For recovering after testing a sample using trySample
+      backupSampleUrl = sampleUrl;
+
       label = getFilename(sampleUrl);
       refreshPlayers({src: true});
-      return self;
 
+      return self;
+    };
+
+
+    /**
+     * Test drive a new sample on this channel. Backs up the original (non-test)
+     * sample.
+     *
+     * @param  {String} testSampleUrl
+     * @return {App.channel} self
+     */
+    this.trySample = function (testSampleUrl) {
+
+      if (typeof testSampleUrl !== 'string') {
+        throw new TypeError(
+          'trySample: testSampleUrl should be of type String, ' +
+            typeof testSampleUrl + ' given.'
+        );
+      }
+
+      sampleUrl = testSampleUrl;
+
+      //Update the audio instances
+      refreshPlayers({src: true});
+
+      return self;
+    };
+
+
+    /**
+     * Reset the current sample to the one in backup storage
+     *
+     * @return {App.Channel} self
+     */
+    this.resetSample = function () {
+      sampleUrl = backupSampleUrl;
+
+      // Update the audio instances
+      refreshPlayers({src: true});
     };
 
 
@@ -463,13 +511,14 @@
     refreshPlayers();
 
     // Yay!
-    events.trigger('channel.added', channelId);
+    events.trigger(
+      'channel.added',
+      [channelId, sampleUrl, label, volume, enabled]
+    );
 
-    events.subscribe({
-      'channel.triggered.channel-' + channelId: this.trigger,
-      'ui.track.toggled.channel-'  + channelId:  this.toggle,
-      'ui.volume.changed.channel-' + channelId: this.setVolume
-    });
+    events.subscribe('channel.triggered.channel-' + channelId, this.trigger);
+    events.subscribe('ui.track.toggled.channel-' + channelId, this.toggle);
+    events.subscribe('ui.volume.changed.channel-' + channelId, this.setVolume);
 
   };
 
