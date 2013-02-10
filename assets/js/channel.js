@@ -274,17 +274,19 @@
     }
 
 
+    // ## Public interface methods
+
     /**
      * Clean up any lingering data and trigger channel.removed event
+     *
+     * @return {App.Channel} self
+     * @todo Check if any data really needs cleaning up. Ensure nothing playing
      */
-    function remove() {
-      //todo: check for cleanup
+    this.remove = function () {
       events.trigger('channel.removed', channelId);
-    }
+      return self;
+    };
 
-
-
-    // ## Public interface methods
 
     /**
      * Updates the sample being used in this channel and refreshes the players

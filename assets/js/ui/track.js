@@ -210,6 +210,7 @@
           $('<input>', {type: 'text', 'class': 'volume', value: 100})
             .dial(dialOptions),
           $('<label>').html(trackName),
+          $('<button>', {'class': 'remove'}).html('Remove'),
           $('<button>', {'class': 'replace'}).html('Replace')
         )
       );
@@ -292,6 +293,26 @@
           }
         }
       });
+
+    });
+
+    // Remove button clicked
+    $tr.on('click', 'th .remove', function () {
+
+      App.ui.dialogs.OkCancel({
+
+        content:          'Remove channel \'' + trackName + '\'?',
+        okButtonText:     'Yes',
+        cancelButtonText: 'No',
+
+        onClose: function (removeConfirmed) {
+
+          if (removeConfirmed) {
+            events.trigger('ui.channel.removed', trackId);
+          }
+        }
+
+      }).spawn();
 
     });
 

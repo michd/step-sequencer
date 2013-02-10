@@ -66,7 +66,7 @@ th {
   vertical-align: middle;
 }
 
-th button.replace {
+th button.replace, th button.remove {
   float: right;
   margin: 0 0 0 5px
 }
