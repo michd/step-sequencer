@@ -6,15 +6,9 @@
     events = App.eventDispatcher;
 
   $(document).ready(function () {
-    var
-      //Todo: ChannelManager
-      channels = [],
-      i;
 
     function reset() {
-      //currentStep = 0;
       events.trigger('ui.transport.reset');
-
     }
 
     function play() {
@@ -23,9 +17,8 @@
       App.tempo.toggle(true);
     }
 
-    // Init time keeper
+    // Init time keeper singleton
     App.Tempo();
-
 
     // Todo: simple ui transport module triggering events?
     $('#play').click(play);
@@ -46,14 +39,13 @@
     // Init TrackManager singleton
     App.ui.TrackManager('#grid', '#trackmanager');
 
-    // Set up initial audio channels
-    // TODO: ChannelManager
-    channels[0] = new App.Channel(al + 'KIK_1.wav');
-    channels[1] = new App.Channel(al + 'CLAP.wav');
-    channels[2] = new App.Channel(al + 'HAT_7.wav');
-    channels[3] = new App.Channel(al + 'OP_HAT.wav');
-    channels[4] = new App.Channel(al + 'RIDE_CYM.wav');
-    channels[5] = new App.Channel(al + 'SN_2.wav');
+    // Init ChannelManager singleton and add some initial channels
+    App.ChannelManager()
+      .addChannel(al + 'KIK_1.wav')
+      .addChannel(al + 'CLAP.wav')
+      .addChannel(al + 'HAT_7.wav')
+      .addChannel(al + 'OP_HAT.wav')
+      .addChannel(al + 'RIDE_CYM.wav')
 
 
   });

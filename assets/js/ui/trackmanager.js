@@ -73,8 +73,6 @@
 		/**
 		 * Ensures the trackIndex lookup dictionary is up to date with
 		 * the tracks array
-		 *
-		 * @todo Implement
 		 */
 		function rehashTrackIndex() {
 

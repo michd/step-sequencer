@@ -251,7 +251,7 @@
 
 			for (i = 0; i < patterns.length; i += 1) {
 				if (patterns[i].steps[currentStep]) {
-					events.trigger('channel.triggered.channel-' + patterns[i].channelId);
+					events.trigger('channel.triggered', patterns[i].channelId);
 				}
 			}
 		}

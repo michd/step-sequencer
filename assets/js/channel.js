@@ -309,6 +309,8 @@
       label = getFilename(sampleUrl);
       refreshPlayers({src: true});
 
+      events.trigger('sample.changed', [channelId, sampleUrl, label]);
+
       return self;
     };
 
@@ -515,10 +517,6 @@
       'channel.added',
       [channelId, sampleUrl, label, volume, enabled]
     );
-
-    events.subscribe('channel.triggered.channel-' + channelId, this.trigger);
-    events.subscribe('ui.track.toggled.channel-' + channelId, this.toggle);
-    events.subscribe('ui.volume.changed.channel-' + channelId, this.setVolume);
 
   };
 

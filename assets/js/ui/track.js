@@ -183,8 +183,8 @@
     function updateVolume(value) {
 
       events.trigger(
-        'ui.volume.changed.channel-' + trackId,
-        value / 100,
+        'ui.volume.changed',
+        [trackId, value / 100],
         $tr.find('th .volume')[0]
       );
     }
@@ -242,7 +242,7 @@
 
       $tr.toggleClass('disabled', !on);
 
-      events.trigger('ui.track.toggled.channel-' + trackId, on, this);
+      events.trigger('ui.track.toggled', [trackId, on], this);
 
     });
 
@@ -288,7 +288,7 @@
           if (result === false) {
             events.trigger('ui.sample.reset', trackId);
           } else {
-            events.trigger('ui.sample.change', [trackId, result]);
+            events.trigger('ui.sample.changed', [trackId, result]);
           }
         }
       });
@@ -399,8 +399,6 @@
      * Briefly highlight current step in the track.
      * If this step is active (plays its sample), briefly highlight the channel
      * name
-     *
-     * Triggered by step.tick event
      *
      * @param {Number} stepIndex
      * @return {App.ui.Track} self
