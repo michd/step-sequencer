@@ -55,20 +55,15 @@
    *
    * Tempo will force instantiation and enforce single instance by overwriting
    * this constructor.
-   *
-   * @param {Function} stepCallback callback function run every step to init with
-   * @todo Refactor so this module just triggers a tempo.tick event instead of
-   * taking a callback
-   * @todo Make this listen for ui play/pause/stop events to replace
-   * public interface
-   * @todo Make this listen for ui bpm change events to replace public interface
    */
-  App.Tempo = function (stepCallback) {
+  App.Tempo = function () {
 
 
     // ## Private properties
 
     var
+
+      // Constants
 
       /**
        * Minimum value for bpm (beats per minute)
@@ -103,6 +98,18 @@
        */
       STEPS_PER_WHOLE_NOTE = 16,
 
+      /**
+       * Minimum number of measures
+       * @type {Number}
+       */
+      MIN_MEASURES = 1,
+
+      /**
+       * Maximum number of measures
+       * @type {Number}
+       */
+      MAX_MEASURES = 16,
+
 
       /**
        * Top part of the time signature, number of beats each measure consists of
@@ -117,6 +124,24 @@
        * @type {Number}
        */
       beatLength = 4,
+
+      /**
+       * How many measures we're dealing with in the pattern
+       * @type {Number}
+       */
+      measures = 1,
+
+      /**
+       * Total number of steps to iterate over
+       * @type {Number}
+       */
+      totalSteps = measures * beatsPerMeasure * Math.round(STEPS_PER_WHOLE_NOTE / beatLength),
+
+      /**
+       * Current location in the pattern
+       * @type {Number}
+       */
+      currentStep = -1,
 
       /**
        * The tempo used in beats per minute
@@ -145,13 +170,6 @@
       stepTimeout = null,
 
       /**
-       * Function called every time step is executed, to interface with whatever
-       * uses this module.
-       * @type {Function}
-       */
-      callback = function () {},
-
-      /**
        * Reference to self for in functions
        * @type {App.Tempo}
        */
@@ -161,7 +179,7 @@
     // Force instantiation before continuing
 
     if (this.constructor !== App.Tempo) {
-      return new App.Tempo(stepCallback);
+      return new App.Tempo();
     }
 
 
@@ -174,10 +192,27 @@
       stepInterval = ((60 * 1000) / bpm) / (STEPS_PER_WHOLE_NOTE / beatLength);
     }
 
+
+    /**
+     * Updates how many steps there are in the whole pattern,
+     * triggers an event if it changed.
+     */
+    function updateSteps() {
+
+      var newTotalSteps = measures * beatsPerMeasure *
+          Math.round(STEPS_PER_WHOLE_NOTE / beatLength);
+
+      if (totalSteps !== newTotalSteps) {
+        events.trigger('tempo.totalsteps.change', newTotalSteps);
+      }
+
+      totalSteps = newTotalSteps;
+    }
+
+
     /**
      * Triggered every (STEPS_PER_WHOLE_NOTE)th note.
-     * Runs the callback function if provided
-     * and retriggers timeout if isPlaying is still true
+     * Increases the current step and triggers tempo.step with that value
      */
     function step() {
 
@@ -185,16 +220,22 @@
         stepTimeout = setTimeout(step, stepInterval);
       }
 
-      events.trigger('tempo.step');
+      currentStep += 1;
 
-      callback.call();
+      if (currentStep > (totalSteps - 1)) {
+        currentStep = 0;
+      }
+
+      events.trigger('tempo.step', currentStep);
     }
 
 
+    // Event listener hooks
+
     /**
-     * Begin playing by setting the flag and triggering step, which will retrigger
+     * Begin playing from where-ever we left off.
      */
-    function start() {
+    function play() {
       isPlaying = true;
       step();
       events.trigger('tempo.started');
@@ -202,29 +243,36 @@
 
 
     /**
-     * Stop playing by unsetting the flag and clearing the timeout
+     * Stop playing, but keep position.
      */
-    function stop() {
+    function pause() {
       isPlaying = false;
       clearTimeout(stepTimeout);
       events.trigger('tempo.paused');
     }
 
 
+    /**
+     * Stop playing, reset position to start
+     */
+    function stop() {
+      isPlaying = false;
+      clearTimeout(stepTimeout);
+      currentStep = -1; //reset
+      events.trigger('tempo.stopped');
+    }
 
-    // ## Public interface methods
 
     /**
      * Update the bpm setting after sanitizing and limiting.
      *
      * @param {Number} newBpm
-     * @return {App.Tempo} self
      */
-    this.setBpm = function (newBpm) {
+    function tempoChange(newBpm) {
 
       if (typeof newBpm !== 'number') {
         throw new TypeError(
-          'setTempo: newBpm should be of type Number, ' +
+          'tempoChange: newBpm should be of type Number, ' +
             typeof newBpm + ' given.'
         );
       }
@@ -234,9 +282,8 @@
       updateStepInterval();
 
       events.trigger('tempo.updated', bpm);
+    }
 
-      return self;
-    };
 
 
     /**
@@ -244,9 +291,8 @@
      *
      * @param {Number} newBeatsPerMeasure Top part of time signature
      * @param {Number} newBeatLength Bottom part of time signature
-     * @return {App.Tempo} self
      */
-    this.setTimeSignature = function (newBeatsPerMeasure, newBeatLength) {
+    function timeSignatureChange(newBeatsPerMeasure, newBeatLength) {
 
       if (typeof newBeatsPerMeasure !== 'number') {
         throw new TypeError(
@@ -274,6 +320,7 @@
       );
 
       // Sanitize / correct beatLength so it works properly with this system
+      // TODO: allow for more interesting time signatures, like having 3 steps per beat.
       beatLength = nearestIntResultDenominator(
         STEPS_PER_WHOLE_NOTE,
         Math.max(1, Math.min(Math.round(newBeatLength), STEPS_PER_WHOLE_NOTE))
@@ -285,98 +332,30 @@
       );
 
       updateStepInterval();
-
-      return self;
-    };
-
-
-    /**
-     * Specify a new function to be called everytime step is triggered.
-     * Pass null to not do anything.
-     *
-     * @param {Function|Null} newCallback [description]
-     */
-    this.setStepCallback = function (newCallback) {
-
-      if (typeof newCallback !== 'null' && typeof newCallback !== 'function') {
-        throw new TypeError(
-          'setStepCallback: newCallback should of type Function or Null, ' +
-            typeof newCallback + ' given.'
-        );
-      }
-
-      callback = newCallback || function () {};
-      return self;
-    };
+      updateSteps();
+    }
 
 
     /**
-     * Switch the tempo ticker on or off.
-     *
-     * @param  {Boolean} on
-     * @return {App.Tempo} self
+     * Event listener for when the UI decides we need more ore less measures
+     * @param  {[type]} newMeasures [description]
+     * @return {[type]}             [description]
      */
-    this.toggle = function (on) {
+    function measuresChange(newMeasures) {
 
-      var newState = (typeof on !== 'undefined') ? !!on : !isPlaying;
+      measures = Math.min(
+        MAX_MEASURES,
+        Math.max(MIN_MEASURES, parseInt(newMeasures, 10))
+      );
 
-      // No change, don't trigger anything
-      if (newState === isPlaying) {
-        return self;
-      }
+      updateSteps();
 
-      if (newState) {
-        start();
-      } else {
-        stop();
-      }
-
-      return self;
-    };
-
-
-    /**
-     * Get the tempo in Beats per minute currently set
-     *
-     * @return {Number}
-     */
-    this.getBpm = function () {
-      return bpm;
-    };
-
-
-    /**
-     * Get the current time signature as an object, including a simple string
-     * representation
-     *
-     * @return {Object}
-     */
-    this.getTimeSignature = function () {
-      return {
-        beatsPerMeasure: beatsPerMeasure,
-        beatLength:      beatLength,
-        simple:          beatsPerMeasure.toString() + '/' + beatLength.toString()
-      };
-    };
-
-
-    /**
-     * Retrieve whether or not the component is currently active and ticking
-     *
-     * @return {Boolean}
-     */
-    this.isPlaying = function () {
-      return isPlaying;
-    };
-
+      events.trigger('tempo.measures.changed', measures);
+    }
 
 
     // ## Initialization
 
-    // If a step callback function was passed in the constructor, use the setter
-    if (typeof stepCallback === 'function') {
-      this.setStepCallback(stepCallback);
-    }
 
     // Store instance in this file's closure for retrieval in case it gets
     // overridden.
@@ -385,11 +364,12 @@
 
     // Subscribe to some mothereffin events
     events.subscribe({
-      'ui.transport.play': function () { self.toggle(true); },
-      'ui.transport.pause': function () { self.toggle(false); },
-      'ui.transport.stop': function () { self.toggle(false); },
-      'ui.transport.tempo.change': this.setBpm,
-      'ui.transport.timesignature.change': this.setTimeSignature
+      'ui.transport.play':                 play,
+      'ui.transport.pause':                pause,
+      'ui.transport.stop':                 stop,
+      'ui.transport.tempo.change':         tempoChange,
+      'ui.transport.timesignature.change': timeSignatureChange,
+      'ui.transport.measures.change':      measuresChange
     });
 
     // Initialize step interval

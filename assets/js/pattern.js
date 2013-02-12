@@ -38,12 +38,6 @@
       channelIndex = {},
 
       /**
-       * Current progress through the pattern, as a step index
-       * @type {Number}
-       */
-      currentStep = -1,
-
-      /**
        * Number of steps we want for each channel, for populating.
        * @type {Number}
        */
@@ -226,31 +220,17 @@
 
 
     /**
-     * Resets the current step back to the beginning
+     * Event listener hook for when tempo advances a step
+     * Triggers any channels with active steps at this index
+     *
+     * @param {Number} stepIndex
      */
-    function resetCurrentStep() {
-      currentStep = -1;
-    }
-
-
-    /**
-     * Every step tick, advance currentStep and trigger any channels that have
-     * a step that's on
-     */
-    function tick() {
+    function step(stepIndex) {
 
       var i;
 
-      currentStep += 1;
-
-      if (currentStep > (stepsPerChannel - 1)) {
-        currentStep = 0;
-      }
-
-      events.trigger('step.tick', currentStep);
-
       for (i = 0; i < patterns.length; i += 1) {
-        if (patterns[i].steps[currentStep]) {
+        if (patterns[i].steps[stepIndex]) {
           events.trigger('channel.triggered', patterns[i].channelId);
         }
       }
@@ -267,13 +247,12 @@
 
     // Subscribe to some mothereffin events
     events.subscribe({
-      'steps-per-channel.update': correctStepCount,
+      'tempo.totalsteps.change':  correctStepCount,
       'channel.added':            addChannel,
       'channel.removed':          removeChannel,
       'ui.step.toggled':          stepToggled,
       'ui.pattern.clear':         clearPattern,
-      'ui.transport.stop':        resetCurrentStep,
-      'tempo.step':               tick
+      'tempo.step':               step
     });
 
 
