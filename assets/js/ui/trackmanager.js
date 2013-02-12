@@ -47,6 +47,24 @@
       trackIndex = {},
 
       /**
+       * Keep track of time signature for when creating new tracks
+       * @type {Number}
+       */
+      beatsPerMeasure = 4,
+
+      /**
+       * Keep track of time signature for when creating new tracks
+       * @type {Number}
+       */
+      stepsPerBeat = 4,
+
+      /**
+       * Keep track of number of measures for when creating new tracks
+       * @type {Number}
+       */
+      measures = 1,
+
+      /**
        * Reference to button used for adding a new track
        * @type {jQuery}
        */
@@ -141,6 +159,9 @@
         .setSampleUrl(sampleUrl)
         .setLabel(label)
         .setVolume(volume)
+        .setBeatsPerMeasure(beatsPerMeasure)
+        .setStepsPerBeat(stepsPerBeat)
+        .setMeasures(measures)
         .toggle(on);
     }
 
@@ -263,6 +284,8 @@
     function beatsPerMeasureChanged(newBeatsPerMeasure) {
       var i;
 
+      beatsPerMeasure = newBeatsPerMeasure;
+
       for (i = 0; i < tracks.length; i += 1) {
         tracks[i].setBeatsPerMeasure(newBeatsPerMeasure);
       }
@@ -276,8 +299,9 @@
      */
     function beatLengthChanged(newBeatLength) {
       var
-        i,
-        stepsPerBeat = Math.round(STEPS_PER_NOTE / newBeatLength);
+        i;
+
+      stepsPerBeat = Math.round(STEPS_PER_NOTE / newBeatLength);
 
       for (i = 0; i < tracks.length; i += 1) {
         tracks[i].setStepsPerBeat(stepsPerBeat);
@@ -292,6 +316,8 @@
      */
     function measuresChanged(newMeasures) {
       var i;
+
+      measures = newMeasures;
 
       for (i = 0; i < tracks.length; i += 1) {
         tracks[i].setMeasures(newMeasures);
@@ -334,10 +360,10 @@
       'volume.changed':  volumeChanged,
       'sample.changed':  sampleChanged,
       'step.toggled':    stepToggled,
-      'step.tick':       stepTick,
+      'tempo.step':      stepTick,
       'tempo.timesignature.beatspermeasure.changed': beatsPerMeasureChanged,
       'tempo.timesignature.beatlength.changed': beatLengthChanged,
-      'ui.transport.measures.change': measuresChanged
+      'tempo.measures.changed': measuresChanged
     });
 
 

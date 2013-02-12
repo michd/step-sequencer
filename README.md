@@ -10,6 +10,10 @@ It's just some experimentation on my end, see what I can achieve with it.
 
 ## Changelog
 
+### v1.0.1:
+
+* Fix confusing bugs related to time signature/measures changes and adding channels, moved some responsibilities around for better organization allowing this.
+
 ### v1.0:
 
 Giant update this time, worth a major version bump. A lot of organizational work was done, which made for very slow updates, as big groundwork was laid. It did allow for building some of the more complex features in a still quite understandable way though.

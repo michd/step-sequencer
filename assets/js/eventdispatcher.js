@@ -62,17 +62,19 @@
       return;
     }
 
-    for (i = 0, iMax = subscribers.length; i < iMax; i += 1) {
-      subscribers[i].apply(context, data);
-    }
-
     // Do some logging
     if (logThis) {
       console.log(
         '[EventDispatcher] {' +  eventName + '} triggered with data: ',
-        data
+        data,
+        ' and sent to {' + subscribers.length + '} subscribers.'
       );
     }
+
+    for (i = 0, iMax = subscribers.length; i < iMax; i += 1) {
+      subscribers[i].apply(context, data);
+    }
+
   }
 
   /**
