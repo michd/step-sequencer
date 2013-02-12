@@ -113,8 +113,6 @@
       // If we already have the right amount of steps, don't bother.
       if (stepsNeeded === stepsCollection.length) { return; }
 
-      events.trigger('steps-per-channel.update', stepsNeeded);
-
       // Add or remove steps as appropriate
       if (stepsNeeded >= stepsCollection.length) {
 

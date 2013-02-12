@@ -224,6 +224,7 @@
     events.subscribe({
       'tempo.started': playStarted,
       'tempo.paused':  pausedOrStopped,
+      'tempo.stopped': pausedOrStopped,
       'tempo.updated': tempoUpdated,
       'tempo.timesignature.beatspermeasure.changed': timeSignatureBeatsPerMeasureChanged,
       'tempo.timesignature.beatlength.changed':      timeSignatureBeatLengthChanged,
