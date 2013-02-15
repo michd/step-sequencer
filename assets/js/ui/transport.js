@@ -28,13 +28,13 @@
        * Button to use for play as well as pause
        * @type {jQuery}
        */
-      $playPauseButton = $('<button>', {'class': 'play'}).html('Play'),
+      $playPauseButton = $('<button>', {'class': 'play icon-play'}),
 
       /**
        * Button for stopping playback
        * @type {jQuery}
        */
-      $stopButton = $('<button>', {'class': 'stop'}).html('Stop'),
+      $stopButton = $('<button>', {'class': 'stop icon-stop'}),
 
       /**
        * Input for BPM
@@ -93,7 +93,7 @@
      * Event listener hook for when playback was started externally
      */
     function playStarted() {
-      $playPauseButton.html('Pause').addClass('pause').removeClass('play');
+      $playPauseButton.addClass('pause icon-pause').removeClass('play icon-play');
     }
 
 
@@ -101,7 +101,7 @@
      * Event listener hook for when the sequencer is paused/stopped externally
      */
     function pausedOrStopped() {
-      $playPauseButton.html('Play').addClass('play').removeClass('pause');
+      $playPauseButton.addClass('play icon-play').removeClass('pause icon-pause');
     }
 
 

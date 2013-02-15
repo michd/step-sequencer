@@ -64,8 +64,8 @@
         width: 45,
         height: 25,
         displayInput: true,
-        bgColor: '#CDA28F',
-        fgColor: '#240C00',
+        bgColor: '#1D1F23',
+        fgColor: '#AAB8D9',
         angleOffset: -90,
         angleArc: 180
       },
@@ -210,8 +210,8 @@
           $('<input>', {type: 'text', 'class': 'volume', value: 100})
             .dial(dialOptions),
           $('<label>').html(trackName),
-          $('<button>', {'class': 'remove'}).html('Remove'),
-          $('<button>', {'class': 'replace'}).html('Replace')
+          $('<button>', {'class': 'remove icon-remove', title: 'Remove channel'}),
+          $('<button>', {'class': 'replace icon-exchange', title: 'Choose different sample'})
         )
       );
 

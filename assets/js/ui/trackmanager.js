@@ -333,7 +333,7 @@
     App.ui.trackManager = instance;
 
 
-    $addButton = $('<button>').html('Add channel')
+    $addButton = $('<button>', {'class': 'icon-plus', title: 'Add channel'})
       .click(function () {
 
         App.ui.SamplePicker({
