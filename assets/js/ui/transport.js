@@ -42,7 +42,7 @@
        */
       $tempoField = $('<input>', {
         'class': 'tempo',
-        type: 'text',        
+        type: 'text',
         title: 'Tempo (BPM)',
         value: 140
       }),

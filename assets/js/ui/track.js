@@ -17,7 +17,7 @@
        * jQuery object containing the table row that is this track
        * @type {jQuery}
        */
-      $tr = $('<tr>', {'data-track': trackId}),
+      $track = $('<div>', {'data-track': trackId, 'class': 'track'}),
 
       /**
        * Array containing step html elements (individual step squares)
@@ -32,7 +32,7 @@
       stepsPerBeat = 4,
 
       /**
-       * How many beat td's should be in one measure
+       * How many beats should be in one measure
        * @type {Number}
        */
       beatsPerMeasure = 4,
@@ -148,28 +148,34 @@
         iMeasures,
         evenMeasure,
         stepIndex = 0,
-        $curTd;
+        $curMeasure,
+        $curBeat,
+        $pattern = $track.find('.pattern');
 
-      //Ensure we have the correct number of steps to spread through the row
+      //Ensure we have the correct number of steps to spread through the track
       correctStepsCollection();
 
-      // Remove existing td before adding new ones
-      $tr.find('td').remove();
+      // Remove existing content before adding new
+      $track.find('.pattern .measure').remove();
 
       // Build structure inside table row
       for (iMeasures = 0; iMeasures < measures; iMeasures += 1) {
-        evenMeasure = (iMeasures % 2 !== 0);
+
+        $curMeasure = $('<div>', {"class": 'measure'});
+
         for (iBeats = 0; iBeats < beatsPerMeasure; iBeats += 1) {
 
-          $curTd = $('<td>', {"class": (evenMeasure ? 'measure-even' : '')});
+          $curBeat = $('<div>', {"class": 'beat'});
 
           for (iSteps = 0; iSteps < stepsPerBeat; iSteps += 1) {
-            $curTd.append(stepsCollection[stepIndex]);
+            $curBeat.append(stepsCollection[stepIndex]);
             stepIndex += 1;
           }
 
-          $tr.append($curTd);
+          $curMeasure.append($curBeat);
         }
+
+        $pattern.append($curMeasure);
       }
 
     }
@@ -185,7 +191,7 @@
       events.trigger(
         'ui.volume.changed',
         [trackId, value / 100],
-        $tr.find('th .volume')[0]
+        $track.find('.controls .volume')[0]
       );
     }
 
@@ -204,15 +210,17 @@
       dialOptions.change = updateVolume;
 
       //set up row heading
-      $tr.html(
-        $('<th>').append(
+      $track.append(
+        $('<div>', {'class': 'controls'}).append(
           $('<input>', {type: 'checkbox', checked: 'checked'}),
           $('<input>', {type: 'text', 'class': 'volume', value: 100})
             .dial(dialOptions),
           $('<label>').html(trackName),
+          $('<div>', {'class': 'indicator'}),
           $('<button>', {'class': 'remove icon-remove', title: 'Remove channel'}),
           $('<button>', {'class': 'replace icon-exchange', title: 'Choose different sample'})
-        )
+        ),
+        $('<div>', {'class': 'pattern'})
       );
 
       redraw();
@@ -222,7 +230,7 @@
     // Internal UI event listeners using jQuery
 
     // Step clicked
-    $tr.on('click', '.step', function () {
+    $track.on('click', '.step', function () {
 
       var on = $(this).toggleClass('on').hasClass('on');
 
@@ -237,11 +245,11 @@
 
 
     // Checkbox toggled
-    $tr.on('change', 'th input[type=checkbox]', function () {
+    $track.on('change', '.controls input[type=checkbox]', function () {
 
       var on = $(this).is(':checked');
 
-      $tr.toggleClass('disabled', !on);
+      $track.toggleClass('disabled', !on);
 
       events.trigger('ui.track.toggled', [trackId, on], this);
 
@@ -249,7 +257,7 @@
 
 
     // Label clicked (edit)
-    $tr.on('click', 'th label', function () {
+    $track.on('click', '.controls label', function () {
 
       $(this).replaceWith(
         $('<input>', {type: 'text', value: $(this).html(), autofocus: 'autofocus'})
@@ -274,7 +282,7 @@
     });
 
     // Replace button clicked
-    $tr.on('click', 'th .replace', function () {
+    $track.on('click', '.controls .replace', function () {
 
       App.ui.SamplePicker({
         content: 'Replace sample #' + (trackId + 1) + ' for ' + trackName,
@@ -297,7 +305,7 @@
     });
 
     // Remove button clicked
-    $tr.on('click', 'th .remove', function () {
+    $track.on('click', '.controls .remove', function () {
 
       App.ui.dialogs.OkCancel({
 
@@ -386,7 +394,7 @@
      */
     this.setLabel = function (newLabel) {
       trackName = newLabel;
-      $tr.find('th label').html(trackName);
+      $track.find('.controls label').html(trackName);
       return self;
     };
 
@@ -428,18 +436,18 @@
       var
         $step = $(stepsCollection[stepIndex]),
         on = $step.hasClass('on'),
-        trackEnabled  = !$tr.hasClass('disabled');
+        trackEnabled  = !$track.hasClass('disabled');
 
       if (trackEnabled) {
-        $tr.removeClass('flash').toggleClass('triggered', on);
+        $track.removeClass('flash').toggleClass('triggered', on);
       }
 
-      $tr.find('.step').not($step).removeClass('triggered');
+      $track.find('.step').not($step).removeClass('triggered');
       $step.addClass('triggered');
 
       if (on && trackEnabled) {
         setTimeout(function () {
-          $tr.addClass('flash').removeClass('triggered');
+          $track.addClass('flash').removeClass('triggered');
         }, 0);
       }
 
@@ -455,7 +463,7 @@
      */
     this.setVolume = function (value) {
 
-      var volumeInput = $tr.find('th .volume')[0];
+      var volumeInput = $track.find('.controls .volume')[0];
 
       // We triggered this, so ignore
       if (this === volumeInput) { return self; }
@@ -475,17 +483,28 @@
      */
     this.toggle = function (on) {
 
-      var trackCheckbox = $tr.find('th input[type=checkbox]')[0];
+      var trackCheckbox = $track.find('.controls input[type=checkbox]')[0];
 
       // Make sure the event doesn't originate from here
       if (trackCheckbox === this) { return self; }
 
       $(trackCheckbox).prop('checked', on); // (Un)check checkbox
 
-      $tr.toggleClass('disabled', !on); // Enable or disable the row
+      $track.toggleClass('disabled', !on); // Enable or disable the row
 
       return self;
     };
+
+
+    /**
+     * Clears any triggered flags on the steps
+     *
+     * @return {App.ui.Track} self
+     */
+    this.clearTriggered = function () {
+      $(stepsCollection).removeClass('triggered');
+      return self;
+    }
 
 
     /**
@@ -500,8 +519,8 @@
      *
      * @return {jQuery}
      */
-    this.getRow = function () {
-      return $tr;
+    this.getUI = function () {
+      return $track;
     };
 
 

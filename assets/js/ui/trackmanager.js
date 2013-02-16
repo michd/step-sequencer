@@ -80,7 +80,7 @@
        * The table for all these tracks
        * @type {jQuery}
        */
-      $grid = $(gridSelector || '#grid');
+      $grid = $(gridSelector || '#sequence');
 
 
 
@@ -151,7 +151,7 @@
         rehashTrackIndex();
 
         // Add to the grid
-        $grid.append(newTrack.getRow());
+        $grid.append(newTrack.getUI());
       }
 
       // Set correct UI values
@@ -186,7 +186,7 @@
       rehashTrackIndex();
 
       // Remove from grid
-      trackToRemove.getRow().remove();
+      trackToRemove.getUI().remove();
     }
 
 
@@ -324,6 +324,17 @@
       }
     }
 
+    /**
+     * Event listener hook for when the tempo is stopped
+     */
+    function stopped() {
+      var i;
+
+      for (i = 0; i < tracks.length; i += 1) {
+        tracks[i].clearTriggered();
+      }
+    }
+
 
     // ## Initialization
 
@@ -362,9 +373,10 @@
       'sample.changed':  sampleChanged,
       'step.toggled':    stepToggled,
       'tempo.step':      stepTick,
+      'tempo.stopped':   stopped,
       'tempo.timesignature.beatspermeasure.changed': beatsPerMeasureChanged,
       'tempo.timesignature.beatlength.changed': beatLengthChanged,
-      'tempo.measures.changed': measuresChanged
+      'tempo.measures.changed': measuresChanged,
     });
 
 

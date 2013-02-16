@@ -122,7 +122,7 @@ button {
 }
 
 button:hover {
-   box-shadow: 0 0 2px 1px rgba(0, 0, 0, .8),
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, .8),
               inset 0 -2px 0 rgba(0, 0, 0, .7);
   text-shadow: 0 0 7px rgba(195, 201, 217, .3);
   color: #FFF;
@@ -157,90 +157,158 @@ button.preview:before {
   width: 20px;
 }
 
-th, td {
-  vertical-align: middle;
-  height: 45px;
+
+/* Sequence */
+
+.track {
+  overflow: hidden;
+  height: 40px;
+  margin-bottom: 1px;
 }
 
-th {
-  padding: 0 5px;
-  text-align: left;
-  border-right-width: 2px;
-  vertical-align: middle;
+.controls, .pattern {
+  float: left;
+  height: 40px;
 }
 
-th button.replace, th button.remove {
+.controls {
+  width: 250px;
+  padding: 2px 2px 2px 2px;
+  background-color: #282B32;
+  border: solid 2px #1D1F23;
+  border-right: none;
+  border-radius: 3px 0 0 3px;
+}
+
+.controls button {
+  padding: 5px;
+  font-size: 115%;
   float: right;
-  margin: 0 0 0 5px
+  margin: 2px 0 0 5px;
 }
 
-th input[type=checkbox] {
+.controls .indicator {
+  width: 7px;
+  height: 25px;
+  background-color: #111;
+  border-radius: 4px;
+  float: right;
+  margin: 4px 5px 5px 9px;
+}
+
+.controls input[type=checkbox] {
   margin-right: 10px;
 }
 
-tr th input[type=text] {
+.controls input[type=text] {
   position: relative;
   z-index: 1;
 }
 
-tr th label, tr th input[type=text] {
+.controls label, .controls input[type=text] {
   margin-left: 10px;
 }
 
-tr.triggered th {
-  border-right-color: red;
-  background-color: #FDD;
+.track.triggered .controls {
+  background-color: #2d3038;
 }
 
-tr.flash th {
-  -webkit-transition:  100ms linear;
-  transition: 100ms linear;
+.track.triggered .controls .indicator {
+  background-color: #FFF;
+  box-shadow: 0 0 5px rgba(195, 201, 217, .7);
 }
 
-tr th canvas {
+.track.flash .controls {
+  -webkit-transition:  250ms linear;
+  transition: 250ms linear;
+}
+
+.track.flash .controls .indicator {
+  -webkit-transition:  150ms linear;
+  transition: 150ms linear;
+}
+
+.controls canvas {
   position: relative;
   cursor: ns-resize;
   z-index: 2;
   top: 4px;
 }
 
-td {
+.pattern {
+  background-color: #333740;
+  border: solid 2px #1D1F23;
+  border-left: none;
   padding: 0 5px;
 }
 
-td:nth-child(even) {
-  background-color: rgba(195, 201, 217, .4);
+.measure, .beat, .step {
+  display: inline-block;
 }
 
-td.measure-even {
-  background-color: #CCC;
+.measure {
+  height: 36px;
+  padding-right: 5px;
+  border-right: solid 2px rgba(29, 31, 35, .8);
+  margin-right: 5px;
 }
 
-td.measure-even:nth-child(odd) {
-  background-color: #C5C5C5;
+.measure:last-child {
+  padding-right: 0;
+  margin-right: 0;
+  border-right: 0;
 }
+
+.beat {
+  padding: 5px 5px 0 3px;
+}
+
 
 .step {
   width: 15px;
   height: 25px;
-  margin: 0 1px;
-  float: left;
-  border: solid 1px black;
+  margin: 0 2px;
+  background-color: #282B32;
   text-align: center;
-  line-height: 25px;
+  line-height: 23px;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .9),
+              0 0 1px #000 inset;
+  -webkit-transition: all 25ms linear;
+  transition: all 25ms linear;
 }
 
 .step.on {
-  background-color: #000;
+  background-color: #7A8499;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .8),
+              0 0 1px rgba(0, 0, 0, .8) inset;
 }
 
 .step.triggered {
-  background-color: #FFC;
+  background-color: #3D424D;
 }
 
-.step.triggered.on {
-  border-color: red;
-  background-color: red;
+.step.on.triggered {
+  background-color: #CCDBFF;
+  box-shadow: 0 0 5px rgba(255, 255, 255, .5),
+              0 1px 3px rgba(0, 0, 0, .8),
+              0 0 1px rgba(0, 0, 0, .8) inset;
+}
+
+.beat:nth-child(even) .step {
+  background-color: #2C2933;
+}
+
+.beat:nth-child(even) .step.on {
+  background-color: #847A99;
+}
+
+.beat:nth-child(even) .step.triggered {
+  background-color: #423D4D;
+}
+
+.beat:nth-child(even) .step.on.triggered {
+  background-color: #DCCDFF;
 }
 
 .step.flash {
@@ -249,22 +317,6 @@ td.measure-even:nth-child(odd) {
 }
 
 
-tr.disabled th {
-  color: #AAA;
-}
-
-tr.disabled th canvas, tr.disabled th input[type=text] {
-  opacity: 0.3;
-}
-
-tr.disabled .step, tr.disabled .step.triggered {
-  border-color: #AAA;
-  background-color: transparent;
-}
-
-tr.disabled .step.on, tr.disabled .step.on.triggered {
-  background-color: #AAA;
-}
 
 footer {
   padding: 7px 15px;

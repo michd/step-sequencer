@@ -9,7 +9,7 @@
     // INIT ALL THE THINGS
 
     // Initialize main UI components
-    App.ui.TrackManager('#grid', '#trackmanager');
+    App.ui.TrackManager('#sequence', '#trackmanager');
 
     App.ui.Transport('#transport');
 
