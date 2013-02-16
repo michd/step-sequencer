@@ -76,7 +76,7 @@ article h1 {
   width: 30px;
 }
 
-button, input[type=text], input[type=number] {  
+button, input[type=text], input[type=number] {
   color: #C3C9D9;
   border: none;
   text-align: center;
@@ -129,7 +129,7 @@ button:hover {
   background-color: #1F2125;
 }
 
-button.pause {
+button.pause, button.preview.icon-stop {
   box-shadow: 0 0 2px 1px rgba(0, 0, 0, .8),
               0 -2px 0 rgba(0, 0, 0, .8) inset,
               0 0px 13px 2px rgba(170, 184, 217, 0.25) inset;
@@ -148,8 +148,16 @@ button:active {
   width: 34px;
 }
 
+button.preview {
+  display: block;
+  margin-top: 15px;
+}
 
-th, td {  
+button.preview:before {
+  width: 20px;
+}
+
+th, td {
   vertical-align: middle;
   height: 45px;
 }
@@ -157,7 +165,6 @@ th, td {
 th {
   padding: 0 5px;
   text-align: left;
-  
   border-right-width: 2px;
   vertical-align: middle;
 }

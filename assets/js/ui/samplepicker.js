@@ -122,7 +122,10 @@
         i,
         $dropdown = $('<select>'),
         optionAttributes = {},
-        $previewButton = $('<button>', {'class': 'icon-play', title: 'Preview'});
+        $previewButton = $('<button>', {
+          'class': 'icon-play preview',
+          title: 'Preview'}
+        ).html(' Preview');
 
       // Init previewPlayer
       previewPlayer.volume = 1;
@@ -181,6 +184,9 @@
 
         selectionChanged(dialog.returnValue);
       });
+
+      // Set up selectBox plugin for proper styling
+      $dropdown.selectBox();
 
 
       //Handle preview button clicks
