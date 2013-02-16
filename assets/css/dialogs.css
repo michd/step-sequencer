@@ -13,12 +13,15 @@
   left: 50%;
   width: 450px;
   margin-left: -225px;
-  border: solid 1px black;
-  background-color: #FFF;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  -webkit-box-shadow: 0 5px 15px 2px rgba(0, 0, 0, 0.4);
-  box-shadow: 0 5px 15px 2px rgba(0, 0, 0, 0.4);
+  border: solid 3px #1D1F23;
+  background-color: #282b32;
+  -webkit-box-shadow: 
+              0 0 2px 1px rgba(0, 0, 0, .8),
+              0 5px 25px 10px rgba(0, 0, 0, 0.25), 
+              0 -1px 1px rgba(170, 184, 217, 0.15) inset;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, .8),
+              0 5px 25px 10px rgba(0, 0, 0, 0.25), 
+              0 -1px 1px rgba(170, 184, 217, 0.15) inset;
 }
 
 .dialog.ui-draggable {
@@ -31,8 +34,8 @@
 
 .dialog .dialog-content {
   margin: 4px;
-  padding: 20px 10px 10px 10px;
-  text-shadow: 1px 1px 0 rgba(238, 231, 167, .8);
+  padding: 10px 10px 10px 10px;
+  font-size: 110%;
 }
 
 .dialog .dialog-content input[type=text],
@@ -48,10 +51,14 @@
 }
 
 .dialog .dialog-controls {
-  padding: 4px 3px 8px;
+  padding: 10px 10px 10px;
   text-align: center;
-  -webkit-border-radius: 0 0 5px 5px;
-  border-radius: 0 0 5px 5px;
+}
+
+.dialog .dialog-controls button {
+  display: inline-block;
+  padding: 5px 9px;
+  min-width: 90px;
 }
 
 .dialog .dialog-controls button:last-child {

@@ -334,6 +334,7 @@
 
 
     $addButton = $('<button>', {'class': 'icon-plus', title: 'Add channel'})
+      .html(' Add channel')
       .click(function () {
 
         App.ui.SamplePicker({

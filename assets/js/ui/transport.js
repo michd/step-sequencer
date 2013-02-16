@@ -41,11 +41,10 @@
        * @type {jQuery}
        */
       $tempoField = $('<input>', {
-        type: 'number',
+        'class': 'tempo',
+        type: 'text',        
         title: 'Tempo (BPM)',
-        value: 140,
-        min: 40,
-        max: 600
+        value: 140
       }),
 
       /**
@@ -53,6 +52,7 @@
        * @type {jQuery}
        */
       $timeSigBeatsPerMeasure = $('<input>', {
+        'class': 'time-sig',
         type: 'text',
         title: 'Time signature top number',
         value: 4
@@ -63,6 +63,7 @@
        * @type {jQuery}
        */
       $timeSigBeatLength = $('<input>', {
+        'class': 'time-sig',
         type: 'text',
         title: 'Time signature bottom number',
         value: 4
@@ -73,11 +74,10 @@
        * @type {jQuery}
        */
       $measures = $('<input>', {
-        type: 'number',
+        'class': 'measures',
+        type: 'text',
         title: 'Number of measures to play with',
-        value: 1,
-        max: 16,
-        min: 1
+        value: 1
       });
 
 
@@ -203,17 +203,17 @@
     $container.append(
       $playPauseButton,
       $stopButton,
-      $('<label>').append(
+      $('<label>', {'class': 'tempo'}).append(
         'Tempo: ',
-        $tempoField
+        $tempoField,
+        'BPM'
       ),
-      $('<label>').append(
-        'Time signature: ',
-        $timeSigBeatsPerMeasure,
-        ' / ',
-        $timeSigBeatLength
+      $('<label>', {'class': 'time-sig'}).append(
+        'Time signature: ', 
+        $timeSigBeatsPerMeasure
       ),
-      $('<label>').append(
+      $('<label>', {'class': 'time-sig'}).append(' / ', $timeSigBeatLength),
+      $('<label>', {'class': 'measures'}).append(
         'Measures: ',
         $measures
       )

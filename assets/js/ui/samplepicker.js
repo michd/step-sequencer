@@ -122,7 +122,7 @@
         i,
         $dropdown = $('<select>'),
         optionAttributes = {},
-        $previewButton = $('<button>').html('Preview');
+        $previewButton = $('<button>', {'class': 'icon-play', title: 'Preview'});
 
       // Init previewPlayer
       previewPlayer.volume = 1;
@@ -189,12 +189,12 @@
         if (!$(this).hasClass('playing')) {
 
           playPreview();
-          $(this).addClass('playing').html('Stop preview');
+          $(this).addClass('playing icon-stop').removeClass('icon-play');
 
         } else {
 
           stopPreview();
-          $(this).removeClass('playing').html('Preview');
+          $(this).removeClass('playing icon-stop'). addClass('icon-play');
         }
       });
 
@@ -202,7 +202,7 @@
       // When preview player finishes playing, revert button
       $(previewPlayer).bind('ended', function () {
 
-        $previewButton.removeClass('playing').html('Preview');
+        $previewButton.removeClass('playing icon-stop').addClass('icon-play');
 
       });
 

@@ -2,7 +2,7 @@
 @import url(http://fonts.googleapis.com/css?family=Ubuntu);
 
 html {
-  background-color: #2D3546;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAMCAIAAADONVt5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFZJREFUeNp0jsERgDAIBCFhtBq/FmH/1SjkAsSfwmM/t3MHH+dFRGOoE4Cz0ecEGJE0cZreheUN0WWPs8teWMw9LFguamHZ27KlZdVifrzy1ftjTQEGANlnIbKDjehfAAAAAElFTkSuQmCC);
 }
 
 body {
@@ -23,13 +23,13 @@ header {
   background-color: #000615;
   padding: 15px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, .8),
-              0 -1px rgba(195, 201, 217, .12) inset;
+              0 -1px rgba(195, 201, 217, .075) inset;
 }
 
 header h1 {
-  font-size: 150%;
+  font-size: 175%;
   color: #AAB8D9;
-  font-weight: bold;
+  font-weight: normal;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, .15), 0 0 1px black;
 }
 
@@ -39,17 +39,6 @@ article h1 {
   margin-bottom: 10px;
 }
 
-footer {
-  padding: 7px 30px;
-  width: 100%;
-  font-size: 70%;
-  color: #444;
-  position: fixed;
-  bottom: 0;
-  background-color: #BFB8B5;
-}
-
-
 /* Sequencer styles */
 #transport, #trackmanager {
   margin-bottom: 20px;
@@ -57,26 +46,70 @@ footer {
 
 #transport label {
   margin-left: 15px;
+  margin-right: 15px;
   line-height: 35px;
+  font-size: 122%;
 }
 
-#transport input[type=text] {
+#transport label.time-sig {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+#transport label.tempo {
+  margin-right: 30px;
+}
+
+#transport label.measures {
+  margin-left: 30px;
+}
+
+#transport input.time-sig, #transport input.measures {
   width: 30px;
 }
 
-button, input[type=text], input[type=number] {
-  background-color: #1D1F23;
+#transport input.tempo {
+  width: 55px;
+}
+
+#transport input.measures {
+  width: 30px;
+}
+
+button, input[type=text], input[type=number] {  
   color: #C3C9D9;
   border: none;
-  font-size: 122%;
-  line-height: 37px;
   text-align: center;
   margin-top: 0;
   margin-bottom: 0;
   font-family: 'Ubuntu', sans-serif;
 }
 
+input[type=text], input[type=number] {
+  font-size: 100%;
+  line-height: 37px;
+  background-color: transparent;
+  border-bottom: solid 2px rgba(195, 201, 217, .1);
+  color: #FFF;
+  -webkit-transition: border 150ms linear;
+  transition: border 150ms linear;
+}
+
+input[type=text]:hover, input[type=number]:hover {
+  border-bottom-color: rgba(195, 201, 217, .5);
+}
+
+input[type=text]:focus, input[type=number]:focus {
+  outline: none;
+  border-bottom-color: #FFF;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, .75);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .75);
+
+}
+
 button {
+  font-size: 122%;
+  background-color: #1D1F23;
   padding: 9px;
   margin: 0 10px 0 0;
   cursor: pointer;
@@ -84,6 +117,8 @@ button {
               0 -2px 0 rgba(0, 0, 0, .5) inset;
   position: relative;
   text-shadow: 0 -2px 1px rgba(0, 0, 0, .85);
+  -webkit-transition: all 80ms linear;
+  transition: all 80ms linear;
 }
 
 button:hover {
@@ -92,6 +127,13 @@ button:hover {
   text-shadow: 0 0 7px rgba(195, 201, 217, .3);
   color: #FFF;
   background-color: #1F2125;
+}
+
+button.pause {
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, .8),
+              0 -2px 0 rgba(0, 0, 0, .8) inset,
+              0 0px 13px 2px rgba(170, 184, 217, 0.25) inset;
+  text-shadow: 0 0 7px rgba(195, 201, 217, .5);
 }
 
 button:active {
@@ -107,22 +149,15 @@ button:active {
 }
 
 
-#transport label {
-  font-size: 122%;
-}
-
-
-th, td {
-  border-right: solid 1px #000;
-  border-bottom: dotted 1px #AAA;
+th, td {  
   vertical-align: middle;
-  height: 35px;
+  height: 45px;
 }
 
 th {
   padding: 0 5px;
   text-align: left;
-  border-bottom: solid 1px black;
+  
   border-right-width: 2px;
   vertical-align: middle;
 }
@@ -167,7 +202,7 @@ td {
 }
 
 td:nth-child(even) {
-  background-color: #E5E5E5;
+  background-color: rgba(195, 201, 217, .4);
 }
 
 td.measure-even {
@@ -186,7 +221,6 @@ td.measure-even:nth-child(odd) {
   border: solid 1px black;
   text-align: center;
   line-height: 25px;
-  border-radius: 4px;
 }
 
 .step.on {
@@ -225,3 +259,16 @@ tr.disabled .step.on, tr.disabled .step.on.triggered {
   background-color: #AAA;
 }
 
+footer {
+  padding: 7px 15px;
+  width: 100%;
+  font-size: 70%;
+  color: #4F5B79;
+  position: fixed;
+  bottom: 0;
+  background-color: #000615;
+}
+
+footer a {
+  color: #8B99BC;
+}
