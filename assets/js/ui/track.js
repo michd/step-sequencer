@@ -508,6 +508,16 @@
       return self;
     }
 
+    /**
+     * Clears any on flags off the steps
+     *
+     * @return {App.ui.Track} self
+     */
+    this.clearSteps = function () {
+      $(stepsCollection).removeClass('on');
+      return self;
+    }
+
 
     /**
      * Return the unique track identifier

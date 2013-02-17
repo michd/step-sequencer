@@ -71,6 +71,12 @@
       $addButton = $(),
 
       /**
+       * Reference to button used for clearing the pattern
+       * @type {[type]}
+       */
+      $clearButton = $(),
+
+      /**
        * Container for any track management control buttons (addButton)
        * @type {jQuery}
        */
@@ -361,7 +367,31 @@
 
       });
 
-    $controls.append($addButton);
+    $clearButton = $('<button>', {'class': 'icon-trash'})
+      .html (' Clear pattern')
+      .click(function () {
+
+        // Confirm dialog
+        App.ui.dialogs.OkCancel({
+          content: 'Are you sure you want to clear the pattern? You can not undo this.',
+          okButtonText: 'Yes',
+          cancelButtonText: 'No',
+          onClose: function (confirmed) {
+            var i;
+
+            if (confirmed) {
+              events.trigger('ui.pattern.clear');
+
+              for(i = 0; i < tracks.length; i += 1) {
+                tracks[i].clearSteps();
+              }
+            }
+          }
+        }).spawn();
+
+      });
+
+    $controls.append($addButton, $clearButton);
 
 
     // Subscribe to some mothereffin events
