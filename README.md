@@ -10,6 +10,15 @@ It's just some experimentation on my end, see what I can achieve with it.
 
 ## Changelog
 
+### v1.1:
+
+* An actual design (which also no longer uses a table for the pattern)
+    * Track toggle checkbox replaced by orb
+    * Add some icons using an icon font, prettifying buttons
+    * Add [jQuery SelectBox](https://github.com/claviska/jquery-selectBox) plugin for nice looking dropdown in sample selector
+    * Add indicator light for nicer track trigger indication
+* Clear the whole pattern in one go (asks for confirmation first)
+
 ### v1.0.1:
 
 * Fix confusing bugs related to time signature/measures changes and adding channels, moved some responsibilities around for better organization allowing this.
@@ -65,7 +74,8 @@ The previous version was mostly initial experimentation. This weekend I've been 
 
 Plans
 -----
-* Design update using icons for various buttons
 * Fixing some layout glitches when there is not enough horizontal space
 * Allow setting maximum polyphony per channel
-* More samples to choose from, sample groups in selector (two dropdowns)
+* More samples to choose from, sample groups in selector (two dropdowns or something)
+* Save your sequence and share it with a simple URL
+* Performance and timing accuracy tweaks
