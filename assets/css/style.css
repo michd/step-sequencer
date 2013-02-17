@@ -172,12 +172,41 @@ button.preview:before {
 }
 
 .controls {
-  width: 250px;
-  padding: 2px 2px 2px 2px;
+  width: 240px;
+  padding: 2px 2px 2px 10px;
   background-color: #282B32;
   border: solid 2px #1D1F23;
   border-right: none;
   border-radius: 3px 0 0 3px;
+  position: relative;
+}
+
+.controls .toggle {
+  display: block;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: #FFF;
+  box-shadow: 0 0 8px rgba(195, 201, 217, .7);
+  top: 16px;
+  left: 20px;
+  z-index: 3;
+}
+
+.track.disabled .controls {
+  background-color: #2B2B2B;
+}
+
+.track.disabled .controls canvas,
+.track.disabled .controls .indicator {
+  opacity: 0.4;
+}
+
+.track.disabled .controls .toggle {
+  background-color: #111;
+  box-shadow: none;
 }
 
 .controls button {
@@ -196,21 +225,30 @@ button.preview:before {
   margin: 4px 5px 5px 9px;
 }
 
-.controls input[type=checkbox] {
-  margin-right: 10px;
-}
-
 .controls input[type=text] {
   position: relative;
   z-index: 1;
 }
 
 .controls label, .controls input[type=text] {
+  display: inline-block;
   margin-left: 10px;
+  width: 100px;
+  position: relative;
+  top: -6px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.controls input[type=text] {
+  border-bottom: dotted 2px rgba(195, 201, 217, .5);
+  box-shadow: none;
 }
 
 .track.triggered .controls {
-  background-color: #2d3038;
+  background-color: #2D3038;
 }
 
 .track.triggered .controls .indicator {
@@ -235,11 +273,16 @@ button.preview:before {
   top: 4px;
 }
 
+
 .pattern {
   background-color: #333740;
   border: solid 2px #1D1F23;
   border-left: none;
   padding: 0 5px;
+}
+
+.track.disabled.pattern {
+  background-color: #404040;
 }
 
 .measure, .beat, .step {
@@ -272,8 +315,8 @@ button.preview:before {
   text-align: center;
   line-height: 23px;
   border-radius: 3px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .9),
-              0 0 1px #000 inset;
+  box-shadow: 0 1px 2px  rgba(0, 0, 0, .9),
+              0 0 1px 1px rgba(0, 0, 0, .8) inset;
   -webkit-transition: all 25ms linear;
   transition: all 25ms linear;
 }
@@ -295,6 +338,7 @@ button.preview:before {
               0 0 1px rgba(0, 0, 0, .8) inset;
 }
 
+
 .beat:nth-child(even) .step {
   background-color: #2C2933;
 }
@@ -309,6 +353,25 @@ button.preview:before {
 
 .beat:nth-child(even) .step.on.triggered {
   background-color: #DCCDFF;
+}
+
+.track.disabled .step,
+.track.disabled .beat:nth-child(even) .step {
+  background-color: #333;
+  box-shadow: 0 1px 2px  rgba(0, 0, 0, .5),
+              0 0 1px 1px rgba(0, 0, 0, .4) inset;
+}
+
+.track.disabled .step.on,
+.track.disabled .beat:nth-child(even) .step.on,
+.track.disabled .step.on.triggered,
+.track.disabled .beat:nth-child(even) .step.on.triggered {
+  background-color: #555;
+}
+
+.track.disabled .step.triggered,
+.track.disabled .beat:nth-child(even) .step.triggered {
+  background-color: #444;
 }
 
 .step.flash {

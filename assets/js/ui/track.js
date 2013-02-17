@@ -61,13 +61,13 @@
        */
       dialOptions = {
         flatMouse: true,
-        width: 45,
-        height: 25,
-        displayInput: true,
+        width: 30,
+        height: 30,
+        displayInput: false,
         bgColor: '#1D1F23',
         fgColor: '#AAB8D9',
-        angleOffset: -90,
-        angleArc: 180
+        angleOffset: -135,
+        angleArc: 270
       },
 
       /**
@@ -205,14 +205,14 @@
      * @todo Switch to using a template instead of ugly jQuery element creation
      * @todo (low priority) allow changing the track name
      */
-    function initRow() {
+    function init() {
 
       dialOptions.change = updateVolume;
 
       //set up row heading
       $track.append(
         $('<div>', {'class': 'controls'}).append(
-          $('<input>', {type: 'checkbox', checked: 'checked'}),
+          $('<span>', {'class': 'toggle'}),
           $('<input>', {type: 'text', 'class': 'volume', value: 100})
             .dial(dialOptions),
           $('<label>').html(trackName),
@@ -245,13 +245,15 @@
 
 
     // Checkbox toggled
-    $track.on('change', '.controls input[type=checkbox]', function () {
+    $track.on('click', '.controls .toggle', function () {
 
-      var on = $(this).is(':checked');
+      $track.toggleClass('disabled');
 
-      $track.toggleClass('disabled', !on);
-
-      events.trigger('ui.track.toggled', [trackId, on], this);
+      events.trigger(
+        'ui.track.toggled',
+        [trackId, !$track.hasClass('disabled')],
+        this
+      );
 
     });
 
@@ -526,7 +528,7 @@
 
     // ## Initialization
 
-    initRow();
+    init();
   };
 
 }(window.STEPSEQUENCER, window.jQuery, window.setTimeout));
