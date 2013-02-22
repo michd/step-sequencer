@@ -72,7 +72,7 @@
     }
 
     for (i = 0, iMax = subscribers.length; i < iMax; i += 1) {
-      subscribers[i].apply(context, data);
+      subscribers[i].callback.apply(context, data);
     }
 
   }
@@ -83,16 +83,24 @@
    *
    * @param  {String}   eventName
    * @param  {Function} callback
+   * @param  {Number} priority
    */
-  function subscribeSingle(eventName, callback) {
+  function subscribeSingle(eventName, callback, priority) {
 
     var subscribers = eventSubscribers[eventName];
+
+    priority = parseInt(priority || 0, 10);
 
     if (typeof subscribers === 'undefined') {
       subscribers = eventSubscribers[eventName] = [];
     }
 
-    subscribers.push(callback);
+    subscribers.push({callback: callback, priority: priority});
+
+    // Re-sort subscribers so highest priority is first
+    subscribers = subscribers.sort(function(a, b) {
+      return b.priority - a.priority
+    });
   }
 
 
@@ -102,13 +110,13 @@
    *
    * @param  {Object} eventHash [description]
    */
-  function subscribeHash(eventHash) {
+  function subscribeHash(eventHash, priority) {
 
     var eventName;
 
     for (eventName in eventHash) {
       if (eventHash.hasOwnProperty(eventName)) {
-        subscribeSingle(eventName, eventHash[eventName]);
+        subscribeSingle(eventName, eventHash[eventName], priority);
       }
     }
   }
@@ -119,8 +127,9 @@
    *
    * @param  {String|Object} eventNameOrHash
    * @param  {Function} callback
+   * @param {Number} priority
    */
-  function subscribe(eventNameOrHash, callback) {
+  function subscribe(eventNameOrHash, callback, priority) {
 
     if (typeof eventNameOrHash === 'object') {
       return subscribeHash(eventNameOrHash);
