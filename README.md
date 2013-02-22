@@ -10,6 +10,14 @@ It's just some experimentation on my end, see what I can achieve with it.
 
 ## Changelog
 
+### v1.2:
+
+* Improve some UI performance by not iterating over all the ui tracks every step; instead use neater jQuery targetting.
+* Add priority parameter to the event dispatcher subscribe function; subscribed callbacks are now executed in order of priority
+* Set priority in channel for channel.trigger, so audio playback fires before the UI gets to do its thing
+* Fix layout glitch when there is not enough horizontal space; now shows a scrollbar
+* Add a bunch of classname options in UI trackmanager and track
+
 ### v1.1:
 
 * An actual design (which also no longer uses a table for the pattern)
@@ -74,8 +82,7 @@ The previous version was mostly initial experimentation. This weekend I've been 
 
 Plans
 -----
-* Fixing some layout glitches when there is not enough horizontal space
+* Save your sequence and share it with a simple URL
 * Allow setting maximum polyphony per channel
 * More samples to choose from, sample groups in selector (two dropdowns or something)
-* Save your sequence and share it with a simple URL
-* Performance and timing accuracy tweaks
+* Timing accuracy tweaks
