@@ -189,8 +189,11 @@
         tracks.push(newTrack);
         rehashTrackIndex();
 
+        newTrack.getUI().hide();
         // Add to the grid
         $grid.append(newTrack.getUI());
+
+        newTrack.getUI().fadeIn(250, 'swing');
       }
 
       // Set correct UI values
@@ -225,7 +228,15 @@
       rehashTrackIndex();
 
       // Remove from grid
-      trackToRemove.getUI().remove();
+      trackToRemove.getUI().animate({
+        height: 0,
+        opacity: 0
+      },
+        200,
+        'swing',
+        function () {
+          $(this).remove();
+        });
     }
 
 
