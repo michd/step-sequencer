@@ -157,8 +157,31 @@ button.preview:before {
   width: 20px;
 }
 
-
 /* Sequence */
+
+#sequence {
+  width: 100%;
+  padding-bottom: 10px;
+  overflow: auto;
+}
+
+#sequence::-webkit-scrollbar {
+  height: 13px;
+}
+#sequence::-webkit-scollbar-track {
+
+}
+#sequence::-webkit-scrollbar-track-piece {
+  background-color: #1D1F23;
+  border-radius: 4px;
+
+}
+#sequence::-webkit-scrollbar-thumb {
+  background-color: #333740;
+  border: solid 2px #1D1F23;
+  border-radius: 4px;
+}
+
 
 .track {
   overflow: hidden;
@@ -277,8 +300,9 @@ button.preview:before {
 .pattern {
   background-color: #333740;
   border: solid 2px #1D1F23;
+  border-right: none;
   border-left: none;
-  padding: 0 5px;
+  padding: 0 0 0 0;
 }
 
 .track.disabled.pattern {
@@ -291,19 +315,17 @@ button.preview:before {
 
 .measure {
   height: 36px;
+  padding-left: 5px;
   padding-right: 5px;
   border-right: solid 2px rgba(29, 31, 35, .8);
-  margin-right: 5px;
-}
-
-.measure:last-child {
-  padding-right: 0;
-  margin-right: 0;
-  border-right: 0;
 }
 
 .beat {
   padding: 5px 5px 0 3px;
+}
+
+.beat:last-child {
+  padding-right: 3px;
 }
 
 

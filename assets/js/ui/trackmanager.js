@@ -341,7 +341,19 @@
 
       $allSteps.not($steps).removeClass('triggered');
       $steps.addClass(opts.triggeredClass);
+    }
 
+    /**
+     * Adjusts width when the steps have changed (measures or time sig)
+     */
+    function stepsChanged() {
+      var
+        $tracks = $grid.find('.' + opts.trackClass),
+        $patterns = $tracks.find('.' + opts.patternClass),
+        $controls = $tracks.find('.' + opts.controlsClass);
+
+      $patterns.width(measures * ($patterns.find('.' + opts.measureClass + ':first-child').outerWidth()));
+      $tracks.width($controls.outerWidth() + $patterns.outerWidth());
     }
 
 
@@ -358,6 +370,8 @@
       for (i = 0; i < tracks.length; i += 1) {
         tracks[i].setBeatsPerMeasure(newBeatsPerMeasure);
       }
+
+      stepsChanged();
     }
 
 
@@ -375,6 +389,8 @@
       for (i = 0; i < tracks.length; i += 1) {
         tracks[i].setStepsPerBeat(stepsPerBeat);
       }
+
+      stepsChanged();
     }
 
 
@@ -391,6 +407,8 @@
       for (i = 0; i < tracks.length; i += 1) {
         tracks[i].setMeasures(newMeasures);
       }
+
+      stepsChanged();
     }
 
     /**
@@ -458,6 +476,8 @@
       });
 
     $controls.append($addButton, $clearButton);
+
+    stepsChanged();
 
 
     // Subscribe to some mothereffin events
