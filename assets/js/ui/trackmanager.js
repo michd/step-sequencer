@@ -205,6 +205,8 @@
         .setStepsPerBeat(stepsPerBeat)
         .setMeasures(measures)
         .toggle(on);
+
+      stepsChanged();
     }
 
 
