@@ -239,10 +239,12 @@
       'ui.sample.try':            sampleTry,
       'ui.sample.reset':          sampleReset,
       'ui.sample.changed':        sampleChanged,
-      'channel.triggered':        channelTriggered,
       'ui.channel.removed':       channelRemoved,
       'ui.channel.add.requested': channelAddRequested
     });
+
+    // High priority for channel triggered (that is, run our function first)
+    events.subscribe('channel.triggered', channelTriggered, 10);
 
 
     /**
