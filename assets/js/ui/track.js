@@ -7,8 +7,17 @@
   var events = App.eventDispatcher;
 
 
-  App.namespace('ui').Track = function (trackId) {
+  App.namespace('ui');
 
+
+  /**
+   * Manages a single track in the UI: controls and pattern
+   *
+   * @param {Number} trackId
+   * @param {Object} options See defaultOptions
+   * @return {App.ui.Track}
+   */
+  App.ui.Track = function (trackId, options) {
 
     // ## Private properties
 
@@ -17,7 +26,19 @@
        * jQuery object containing the table row that is this track
        * @type {jQuery}
        */
-      $track = $('<div>', {'data-track': trackId, 'class': 'track'}),
+      $track = $('<div>'),
+
+      /**
+       * jQuery object containing the controls for this track
+       * @type {jQuery}
+       */
+      $controls = $('<div>'),
+
+      /**
+       * jQuery object containing the pattern for this track
+       * @type {jQuery}
+       */
+      $pattern = $('<div>'),
 
       /**
        * Array containing step html elements (individual step squares)
@@ -71,6 +92,38 @@
       },
 
       /**
+       * Eventual options object (from defaultOptions and options overrides)
+       * @type {Object}
+       */
+      opts = {},
+
+      /**
+       * Default options the options parameter extends from
+       * @type {Object}
+       */
+      defaultOptions = {
+        trackClass:     'track',
+        controlsClass:  'controls',
+        patternClass:   'pattern',
+        toggleClass:    'toggle',
+        volumeClass:    'volume',
+        indicatorClass: 'indicator',
+        removeClass:    'remove',
+        replaceClass:   'replace',
+        measureClass:   'measure',
+        beatClass:      'beat',
+        stepClass:      'step',
+        onClass:        'on',
+        disabledClass:  'disabled',
+        triggeredClass: 'triggered',
+
+        icons: {
+          'remove':  'icon-remove',
+          'replace': 'icon-exchange'
+        }
+      },
+
+      /**
        * Reference to self for in functions
        * @type {App.ui.Track}
        */
@@ -80,7 +133,7 @@
     // Force instantiation before continuing
 
     if (this.constructor !== App.ui.Track) {
-      return new App.ui.Track(trackId);
+      return new App.ui.Track(trackId, options);
     }
 
 
@@ -120,7 +173,7 @@
         iMax = stepsNeeded - stepsCollection.length;
         for (i = 0; i < iMax; i += 1) {
           stepsCollection.push(
-            $('<div>', {'class': 'step'})[0]
+            $('<div>', {'class': opts.stepClass})[0]
           );
         }
 
@@ -149,23 +202,22 @@
         evenMeasure,
         stepIndex = 0,
         $curMeasure,
-        $curBeat,
-        $pattern = $track.find('.pattern');
+        $curBeat;
 
       //Ensure we have the correct number of steps to spread through the track
       correctStepsCollection();
 
       // Remove existing content before adding new
-      $track.find('.pattern .measure').remove();
+      $pattern.find('.' + opts.measureClass).remove();
 
       // Build structure inside table row
       for (iMeasures = 0; iMeasures < measures; iMeasures += 1) {
 
-        $curMeasure = $('<div>', {"class": 'measure'});
+        $curMeasure = $('<div>', {'class': opts.measureClass});
 
         for (iBeats = 0; iBeats < beatsPerMeasure; iBeats += 1) {
 
-          $curBeat = $('<div>', {"class": 'beat'});
+          $curBeat = $('<div>', {'class': opts.beatClass});
 
           for (iSteps = 0; iSteps < stepsPerBeat; iSteps += 1) {
             $curBeat.append(stepsCollection[stepIndex]);
@@ -191,7 +243,7 @@
       events.trigger(
         'ui.volume.changed',
         [trackId, value / 100],
-        $track.find('.controls .volume')[0]
+        $controls.find('.' + opts.volumeClass)[0]
       );
     }
 
@@ -203,36 +255,44 @@
      * Sets up the steps divided over beats and measures through redraw()
      *
      * @todo Switch to using a template instead of ugly jQuery element creation
-     * @todo (low priority) allow changing the track name
      */
-    function init() {
+    function buildTrack() {
 
       dialOptions.change = updateVolume;
 
       //set up row heading
-      $track.append(
-        $('<div>', {'class': 'controls'}).append(
-          $('<span>', {'class': 'toggle'}),
-          $('<input>', {type: 'text', 'class': 'volume', value: 100})
+      $track.addClass(opts.trackClass).append(
+        $controls.addClass(opts.controlsClass).append(
+          $('<span>', {'class': opts.toggleClass}),
+          $('<input>', {type: 'text', 'class': opts.volumeClass, value: 100})
             .dial(dialOptions),
           $('<label>').html(trackName),
-          $('<div>', {'class': 'indicator'}),
-          $('<button>', {'class': 'remove icon-remove', title: 'Remove channel'}),
-          $('<button>', {'class': 'replace icon-exchange', title: 'Choose different sample'})
+          $('<div>', {'class': opts.indicatorClass}),
+          $('<button>', {
+              'class': [opts.removeClass, opts.icons.remove].join(' '),
+              title: 'Remove channel'
+            }),
+          $('<button>', {
+              'class': [opts.replaceClass, opts.icons.replace].join(' '),
+              title: 'Choose different sample'
+            })
         ),
-        $('<div>', {'class': 'pattern'})
+        $pattern.addClass(opts.patternClass)
       );
 
       redraw();
     }
 
 
+    // Load options properly
+    opts = $.extend({}, defaultOptions, options);
+
     // Internal UI event listeners using jQuery
 
     // Step clicked
-    $track.on('click', '.step', function () {
+    $pattern.on('click', '.' + opts.stepClass, function () {
 
-      var on = $(this).toggleClass('on').hasClass('on');
+      var on = $(this).toggleClass(opts.onClass).hasClass(opts.onClass);
 
       // Trigger event on main event dispatcher
       events.trigger(
@@ -245,13 +305,13 @@
 
 
     // Checkbox toggled
-    $track.on('click', '.controls .toggle', function () {
+    $controls.on('click', '.' + opts.toggleClass, function () {
 
-      $track.toggleClass('disabled');
+      $track.toggleClass(opts.disabledClass);
 
       events.trigger(
         'ui.track.toggled',
-        [trackId, !$track.hasClass('disabled')],
+        [trackId, !$track.hasClass(opts.disabledClass)],
         this
       );
 
@@ -259,7 +319,7 @@
 
 
     // Label clicked (edit)
-    $track.on('click', '.controls label', function () {
+    $controls.on('click', 'label', function () {
 
       $(this).replaceWith(
         $('<input>', {type: 'text', value: $(this).html(), autofocus: 'autofocus'})
@@ -284,7 +344,7 @@
     });
 
     // Replace button clicked
-    $track.on('click', '.controls .replace', function () {
+    $controls.on('click', '.' + opts.replaceClass, function () {
 
       App.ui.SamplePicker({
         content: 'Replace sample #' + (trackId + 1) + ' for ' + trackName,
@@ -298,16 +358,16 @@
         onClose: function (result) {
           if (result === false) {
             events.trigger('ui.sample.reset', trackId);
-          } else {
-            events.trigger('ui.sample.changed', [trackId, result]);
+            return;
           }
+          events.trigger('ui.sample.changed', [trackId, result]);
         }
       });
 
     });
 
     // Remove button clicked
-    $track.on('click', '.controls .remove', function () {
+    $controls.on('click', '.' + opts.removeClass, function () {
 
       App.ui.dialogs.OkCancel({
 
@@ -421,37 +481,22 @@
      * @return {App.ui.Track} self
      */
     this.toggleStep = function (stepIndex, on) {
-      $(stepsCollection[stepIndex]).toggleClass('on', on);
+      $(stepsCollection[stepIndex]).toggleClass(opts.onClass, on);
       return self;
     };
 
 
     /**
-     * Briefly highlight current step in the track.
-     * If this step is active (plays its sample), briefly highlight the channel
-     * name
+     * Briefly highlight the track as its sample just played
      *
-     * @param {Number} stepIndex
      * @return {App.ui.Track} self
      */
-    this.stepTick = function (stepIndex) {
-      var
-        $step = $(stepsCollection[stepIndex]),
-        on = $step.hasClass('on'),
-        trackEnabled  = !$track.hasClass('disabled');
+    this.trigger = function () {
+      $track.removeClass('flash').addClass(opts.triggeredClass);
 
-      if (trackEnabled) {
-        $track.removeClass('flash').toggleClass('triggered', on);
-      }
-
-      $track.find('.step').not($step).removeClass('triggered');
-      $step.addClass('triggered');
-
-      if (on && trackEnabled) {
-        setTimeout(function () {
-          $track.addClass('flash').removeClass('triggered');
-        }, 0);
-      }
+      setTimeout(function () {
+        $track.addClass('flash').removeClass(opts.triggeredClass);
+      }, 0);
 
       return self;
     };
@@ -465,7 +510,7 @@
      */
     this.setVolume = function (value) {
 
-      var volumeInput = $track.find('.controls .volume')[0];
+      var volumeInput = $controls.find(opts.volumeClass)[0];
 
       // We triggered this, so ignore
       if (this === volumeInput) { return self; }
@@ -485,14 +530,14 @@
      */
     this.toggle = function (on) {
 
-      var trackCheckbox = $track.find('.controls input[type=checkbox]')[0];
+      var trackCheckbox = $controls.find('input[type=checkbox]')[0];
 
       // Make sure the event doesn't originate from here
       if (trackCheckbox === this) { return self; }
 
       $(trackCheckbox).prop('checked', on); // (Un)check checkbox
 
-      $track.toggleClass('disabled', !on); // Enable or disable the row
+      $track.toggleClass(opts.disabledClass, !on); // Enable or disable the row
 
       return self;
     };
@@ -502,11 +547,12 @@
      * Clears any triggered flags on the steps
      *
      * @return {App.ui.Track} self
+     * @todo  deprecate and do from trackManager
      */
     this.clearTriggered = function () {
-      $(stepsCollection).removeClass('triggered');
+      $(stepsCollection).removeClass(opts.triggeredClass);
       return self;
-    }
+    };
 
     /**
      * Clears any on flags off the steps
@@ -514,9 +560,9 @@
      * @return {App.ui.Track} self
      */
     this.clearSteps = function () {
-      $(stepsCollection).removeClass('on');
+      $(stepsCollection).removeClass(opts.onClass);
       return self;
-    }
+    };
 
 
     /**
@@ -538,7 +584,7 @@
 
     // ## Initialization
 
-    init();
+    buildTrack();
   };
 
 }(window.STEPSEQUENCER, window.jQuery, window.setTimeout));

@@ -22,8 +22,9 @@
    *
    * @param {String} gridSelector Selector for the table where tracks get added.
    * @param {String} controlsSelector Selector for element to add buttons to
+   * @param {Object} options See defaultOptions
    */
-  App.ui.TrackManager = function (gridSelector, controlsSelector) {
+  App.ui.TrackManager = function (gridSelector, controlsSelector, options) {
 
     // ## Private properties
 
@@ -86,7 +87,39 @@
        * The table for all these tracks
        * @type {jQuery}
        */
-      $grid = $(gridSelector || '#sequence');
+      $grid = $(gridSelector || '#sequence'),
+
+      /**
+       * Eventual options object (from defaultOptions and options overrides)
+       * @type {Object}
+       */
+      opts = {},
+
+      /**
+       * Default options the options parameter extends from
+       * @type {Object}
+       */
+      defaultOptions = {
+        trackClass:     'track',
+        controlsClass:  'controls',
+        patternClass:   'pattern',
+        toggleClass:    'toggle',
+        volumeClass:    'volume',
+        indicatorClass: 'indicator',
+        removeClass:    'remove',
+        replaceClass:   'replace',
+        measureClass:   'measure',
+        beatClass:      'beat',
+        stepClass:      'step',
+        onClass:        'on',
+        disabledClass:  'disabled',
+        triggeredClass: 'triggered',
+
+        icons: {
+          'remove':  'icon-remove',
+          'replace': 'icon-exchange'
+        }
+      };
 
 
 
@@ -214,6 +247,22 @@
 
 
     /**
+     * Event listener hook for when a channel's sample gets played
+     * This highlights the corresponding track
+     *
+     * @param  {Number} trackId
+     */
+    function channelTriggered(trackId) {
+
+      var track = getTrackById(trackId);
+
+      if (track === false) { return; }
+
+      track.trigger();
+    }
+
+
+    /**
      * Event listener hook for when a channel's volume changes.
      * This calls the volume change method on the corresponding Track instance.
      *
@@ -274,11 +323,14 @@
      */
     function stepTick(stepIndex) {
 
-      var i;
+      var
+        $tracks = $grid.find('.' + opts.trackClass),
+        $allSteps = $tracks.find('.' + opts.stepClass),
+        $steps = $tracks.find('.' + opts.stepClass + ':eq(' + stepIndex.toString() + ')');
 
-      for (i = 0; i < tracks.length; i += 1) {
-        tracks[i].stepTick(stepIndex);
-      }
+      $allSteps.not($steps).removeClass('triggered');
+      $steps.addClass(opts.triggeredClass);
+
     }
 
 
@@ -349,6 +401,9 @@
     instance = this;
     App.ui.trackManager = instance;
 
+    // Load options properly
+    opts = $.extend({}, defaultOptions, options);
+
 
     $addButton = $('<button>', {'class': 'icon-plus', title: 'Add channel'})
       .html(' Add channel')
@@ -368,7 +423,7 @@
       });
 
     $clearButton = $('<button>', {'class': 'icon-trash'})
-      .html (' Clear pattern')
+      .html(' Clear pattern')
       .click(function () {
 
         // Confirm dialog
@@ -382,7 +437,7 @@
             if (confirmed) {
               events.trigger('ui.pattern.clear');
 
-              for(i = 0; i < tracks.length; i += 1) {
+              for (i = 0; i < tracks.length; i += 1) {
                 tracks[i].clearSteps();
               }
             }
@@ -396,17 +451,18 @@
 
     // Subscribe to some mothereffin events
     events.subscribe({
-      'channel.added':   channelAdded,
-      'channel.removed': channelRemoved,
-      'channel.toggled': channelToggled,
-      'volume.changed':  volumeChanged,
-      'sample.changed':  sampleChanged,
-      'step.toggled':    stepToggled,
-      'tempo.step':      stepTick,
-      'tempo.stopped':   stopped,
+      'channel.added':     channelAdded,
+      'channel.removed':   channelRemoved,
+      'channel.toggled':   channelToggled,
+      'channel.triggered': channelTriggered,
+      'volume.changed':    volumeChanged,
+      'sample.changed':    sampleChanged,
+      'step.toggled':      stepToggled,
+      'tempo.step':        stepTick,
+      'tempo.stopped':     stopped,
       'tempo.timesignature.beatspermeasure.changed': beatsPerMeasureChanged,
       'tempo.timesignature.beatlength.changed': beatLengthChanged,
-      'tempo.measures.changed': measuresChanged,
+      'tempo.measures.changed': measuresChanged
     });
 
 
