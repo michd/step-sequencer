@@ -10,6 +10,10 @@ It's just some experimentation on my end, see what I can achieve with it.
 
 ## Changelog
 
+### v1.2.1:
+
+* Fix glitch when there is not enough horizontal space and you ad a channel, the pattern for that channel wouldn't render.
+
 ### v1.2:
 
 * Improve some UI performance by not iterating over all the ui tracks every step; instead use neater jQuery targetting.
